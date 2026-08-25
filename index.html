@@ -91,7 +91,7 @@ function renderCart(){
 async function submitOrder(){
  const name=document.getElementById("name").value.trim(), className=document.getElementById("className").value.trim();
  const items=Object.values(cart), note=document.getElementById("note").value.trim();
- if(!name||!className)return alert("Vui lòng nhập Tên khách hàng.");
+if(!name)return alert("Vui lòng nhập Họ và tên.");
  if(!items.length)return alert("Vui lòng chọn ít nhất 1 món.");
  const total=items.reduce((s,x)=>s+x.price*x.qty,0);
  if(API_URL==="DAN_ENDPOINT_APPS_SCRIPT_VAO_DAY")return alert("Hệ thống chưa được kết nối máy chủ nhận đơn. Hãy dán URL Apps Script vào file index.html.");
