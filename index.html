@@ -99,7 +99,7 @@ async function submitOrder(){
  try{
    const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({name,className,items,note,total})});
    const data=await r.json();
-   if(data.ok){document.getElementById("result").innerHTML=`<div class="success">✅ Đặt món thành công! Mã đơn: <b>#${data.orderNo}</b></div>`;cart={};renderCart();document.getElementById("note").value="";}
+   if(data.ok){document.getElementById("result").innerHTML=`<div class="success">✅ Đặt món thành công!</div>`;cart={};renderCart();document.getElementById("note").value="";}
    else throw new Error(data.error||"Lỗi gửi đơn");
  }catch(e){alert("Chưa gửi được đơn: "+e.message)}
  finally{btn.disabled=false;btn.textContent="🔴 ĐẶT MÓN";}
