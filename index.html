@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HAMI Coffee - Order</title>
+<style>
+:root{--red:#c71919;--dark:#090b0c;--card:#141719;--line:#333;color-scheme:dark}
+*{box-sizing:border-box} body{margin:0;background:var(--dark);color:#fff;font-family:Arial,sans-serif}
+header{padding:22px 16px;text-align:center;border-bottom:2px solid var(--red);position:sticky;top:0;background:#090b0cf2;z-index:5}
+.logo{font-size:42px;font-style:italic;color:#e21b1b;font-weight:700}.sub{letter-spacing:5px;font-size:13px}
+.wrap{max-width:760px;margin:auto;padding:16px}.info,.cart,.category{background:var(--card);border:1px solid #272b2e;border-radius:14px;padding:14px;margin:14px 0}
+h2{margin:0 0 12px;color:#ff4242;font-size:19px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input,textarea,select{width:100%;padding:12px;border-radius:9px;border:1px solid #444;background:#0d0f10;color:#fff;font-size:15px}
+.item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dashed #444}.item:last-child{border:0}
+.name{font-weight:700}.price{color:#ffb0b0;margin-top:4px;font-size:14px}
+.controls{display:flex;align-items:center;gap:7px}.qty{min-width:20px;text-align:center}
+button{border:0;border-radius:9px;padding:9px 12px;background:var(--red);color:#fff;font-weight:700;cursor:pointer}
+button.minus{background:#333}.hidden{display:none}.cartline{padding:7px 0;border-bottom:1px dashed #444}
+.total{font-size:20px;font-weight:700;color:#ff6969;margin-top:12px}.order{width:100%;font-size:18px;margin-top:12px;padding:14px}
+.note{color:#aaa;font-size:13px;line-height:1.45}.success{background:#153a20;border:1px solid #277a40;padding:12px;border-radius:10px;margin-top:12px}
+</style>
+</head>
+<body>
+<header><div class="logo">Hami</div><div class="sub">COFFEE • ORDER</div></header>
+<main class="wrap">
+  <section class="info">
+    <h2>👤 Thông tin khách hàng</h2>
+    <div class="grid">
+      <input id="name" placeholder="Họ và tên *">
+      <input id="className" placeholder="Lớp *">
+    </div>
+  </section>
+  <div id="menu"></div>
+  <section class="cart">
+    <h2>🛒 Giỏ hàng</h2>
+    <div id="cart"><span class="note">Chưa có món nào.</span></div>
+    <div class="total" id="total">Tổng: 0đ</div>
+    <textarea id="note" rows="3" placeholder="Ghi chú: ít đá, ít ngọt..."></textarea>
+    <button class="order" onclick="submitOrder()">🔴 ĐẶT MÓN</button>
+    <div class="note">Sau khi bấm đặt món, đơn sẽ gửi về quán qua Telegram.</div>
+    <div id="result"></div>
+  </section>
+</main>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwfrpx2cYrT9ncGNhXYTNYaGih_qohAhpOegnFlNw5p7vEzKoFlOYldwoflVzHdldU2/exec";
+const menu = [
+["🧋 TRÀ", [["Trà đào", {L:17000}],["Trà dâu",{L:17000}],["Trà vải",{L:17000}]]],
+["🥤 SODA", [["Soda đào",{L:17000}],["Soda dâu",{L:17000}],["Soda việt quất",{L:17000}],["Soda chanh dây",{L:17000}]]],
+["☕ CÀ PHÊ", [["Cà phê đen đá",{M:15000}],["Cà phê sữa",{M:17000}],["Cà phê muối",{M:18000}],["Bạc xỉu",{M:17000,L:20000}]]],
+["🥛 SỮA CHUA", [["Sữa chua đào",{M:17000,L:22000}],["Sữa chua dâu",{M:17000,L:22000}],["Sữa chua việt quất",{M:17000,L:22000}],["Sữa chua chanh dây",{M:17000,L:22000}]]],
+["🍵 LATTE", [["Matcha latte",{M:17000,L:22000}],["Khoai môn latte",{M:17000,L:22000}],["Cacao latte",{M:17000,L:22000}]]],
+["🥤 KHÁC", [["Nước chanh",{"Tiêu chuẩn":10000}],["Lipton",{"Tiêu chuẩn":10000}],["Trà đường",{"Tiêu chuẩn":10000}],["Dừa lạnh",{"Tiêu chuẩn":15000}],["Nước ngọt các loại",{"12k":12000,"15k":15000}]]]
+];
+let cart = {};
+const money=n=>n.toLocaleString("vi-VN")+"đ";
+
+function renderMenu(){
+ const root=document.getElementById("menu");
+ menu.forEach(([cat,items])=>{
+   let sec=document.createElement("section"); sec.className="category";
+   sec.innerHTML=`<h2>${cat}</h2>`;
+   items.forEach(([name,sizes])=>{
+     const key=name.replace(/\s+/g,"_");
+     const sizeKeys=Object.keys(sizes);
+     const options=sizeKeys.map(s=>`<option value="${s}">${s} - ${money(sizes[s])}</option>`).join("");
+     const row=document.createElement("div"); row.className="item";
+     row.innerHTML=`<div><div class="name">${name}</div><div class="price">${sizeKeys.map(s=>s+": "+money(sizes[s])).join(" | ")}</div></div>
+       <div class="controls"><select id="size_${key}">${options}</select><button onclick="addItem('${name}')">+</button></div>`;
+     sec.appendChild(row);
+   }); root.appendChild(sec);
+ });
+}
+function getPrices(name){for(const [,items] of menu){for(const [n,p] of items) if(n===name)return p}}
+function addItem(name){
+ const key=name.replace(/\s+/g,"_"), size=document.getElementById("size_"+key).value;
+ const id=name+"|"+size, prices=getPrices(name);
+ if(!cart[id]) cart[id]={name,size,price:prices[size],qty:0};
+ cart[id].qty++; renderCart();
+}
+function change(id,d){cart[id].qty+=d;if(cart[id].qty<=0)delete cart[id];renderCart()}
+function renderCart(){
+ const el=document.getElementById("cart"), keys=Object.keys(cart);
+ if(!keys.length){el.innerHTML='<span class="note">Chưa có món nào.</span>';document.getElementById("total").textContent="Tổng: 0đ";return}
+ let total=0;el.innerHTML="";
+ keys.forEach(id=>{const x=cart[id], sub=x.price*x.qty;total+=sub;
+   el.innerHTML+=`<div class="cartline"><b>${x.name}</b> (${x.size})<br>${money(x.price)} × <button class="minus" onclick='change(${JSON.stringify(id)},-1)'>−</button> ${x.qty} <button onclick='change(${JSON.stringify(id)},1)'>+</button> = <b>${money(sub)}</b></div>`;
+ });
+ document.getElementById("total").textContent="Tổng: "+money(total);
+}
+async function submitOrder(){
+ const name=document.getElementById("name").value.trim(), className=document.getElementById("className").value.trim();
+ const items=Object.values(cart), note=document.getElementById("note").value.trim();
+ if(!name||!className)return alert("Vui lòng nhập Họ và tên và Lớp.");
+ if(!items.length)return alert("Vui lòng chọn ít nhất 1 món.");
+ const total=items.reduce((s,x)=>s+x.price*x.qty,0);
+ if(API_URL==="DAN_ENDPOINT_APPS_SCRIPT_VAO_DAY")return alert("Hệ thống chưa được kết nối máy chủ nhận đơn. Hãy dán URL Apps Script vào file index.html.");
+ const btn=document.querySelector(".order");btn.disabled=true;btn.textContent="Đang gửi đơn...";
+ try{
+   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({name,className,items,note,total})});
+   const data=await r.json();
+   if(data.ok){document.getElementById("result").innerHTML=`<div class="success">✅ Đặt món thành công! Mã đơn: <b>#${data.orderNo}</b></div>`;cart={};renderCart();document.getElementById("note").value="";}
+   else throw new Error(data.error||"Lỗi gửi đơn");
+ }catch(e){alert("Chưa gửi được đơn: "+e.message)}
+ finally{btn.disabled=false;btn.textContent="🔴 ĐẶT MÓN";}
+}
+renderMenu();
+</script>
+</body>
+</html>
