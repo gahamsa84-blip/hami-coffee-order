@@ -1,217 +1,1490 @@
-/**
- * HAMI COFFEE - ORDER BACKEND
- * Gửi đơn đến Telegram
- *
- * Script Properties cần có:
- * TELEGRAM_BOT_TOKEN
- * TELEGRAM_CHAT_ID_1
- * TELEGRAM_CHAT_ID_2
- * ORDER_COUNTER
- */
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
 
-function doGet() {
-  return json_({
-    ok: true,
-    service: "HAMI Coffee Order API"
-  });
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>HAMI Coffee | Đặt món</title>
+
+<style>
+
+:root{
+  --coffee:#4b2e20;
+  --coffee-dark:#2c1a12;
+  --cream:#fffaf4;
+  --cream-2:#f5ece2;
+  --orange:#d97941;
+  --orange-dark:#b95e2c;
+  --green:#2f7d57;
+  --line:#e8d9cb;
+  --text:#34231b;
+  --muted:#876f60;
+  --white:#ffffff;
 }
 
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents || "{}");
-    const props = PropertiesService.getScriptProperties();
+*{
+  box-sizing:border-box;
+}
 
-    const token = props.getProperty("TELEGRAM_BOT_TOKEN");
+body{
+  margin:0;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 
-    const chatIds = [
-      props.getProperty("TELEGRAM_CHAT_ID_1"),
-      props.getProperty("TELEGRAM_CHAT_ID_2")
-    ].filter(Boolean);
+  background:
+    linear-gradient(
+      180deg,
+      #f7eee6 0%,
+      #fffaf5 100%
+    );
 
-    if (!token) {
-      throw new Error("Chưa cấu hình TELEGRAM_BOT_TOKEN.");
+  color:var(--text);
+}
+
+
+/* HEADER */
+
+header{
+  background:
+    linear-gradient(
+      135deg,
+      #3b2116,
+      #6a3c29
+    );
+
+  color:white;
+
+  padding:
+    28px 18px
+    32px;
+
+  text-align:center;
+
+  border-radius:
+    0 0 28px 28px;
+
+  box-shadow:
+    0 6px 25px
+    rgba(60,30,15,.18);
+}
+
+.logo{
+  font-size:42px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+.logo span{
+  color:#f3b37e;
+  font-style:italic;
+}
+
+.sub{
+  margin-top:7px;
+  font-size:12px;
+  letter-spacing:4px;
+  color:#f1d5c0;
+}
+
+
+/* MAIN */
+
+.wrap{
+  max-width:760px;
+  margin:auto;
+  padding:
+    18px 14px
+    45px;
+}
+
+
+/* CARD */
+
+.info,
+.category,
+.cart{
+  background:
+    rgba(255,255,255,.92);
+
+  border:
+    1px solid var(--line);
+
+  border-radius:20px;
+
+  padding:16px;
+
+  margin:16px 0;
+
+  box-shadow:
+    0 8px 25px
+    rgba(80,45,25,.06);
+}
+
+
+/* TITLE */
+
+h2{
+  margin:
+    0 0 15px;
+
+  font-size:19px;
+
+  color:var(--coffee);
+
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.category-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding-bottom:12px;
+
+  border-bottom:
+    1px solid var(--line);
+}
+
+
+/* CUSTOMER INFO */
+
+.grid{
+  display:grid;
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:10px;
+}
+
+input,
+textarea,
+select{
+  width:100%;
+
+  border:
+    1px solid #ddcabc;
+
+  background:
+    #fffdfa;
+
+  color:var(--text);
+
+  padding:13px;
+
+  border-radius:12px;
+
+  font-size:15px;
+
+  outline:none;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:
+    var(--orange);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(217,121,65,.12);
+}
+
+textarea{
+  resize:vertical;
+}
+
+
+/* MENU ITEM */
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  gap:12px;
+
+  padding:15px 0;
+
+  border-bottom:
+    1px dashed #ead9cc;
+}
+
+.item:last-child{
+  border-bottom:0;
+  padding-bottom:0;
+}
+
+.item-name{
+  font-weight:700;
+  font-size:16px;
+}
+
+.price{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.controls select{
+  width:auto;
+  min-width:130px;
+  padding:10px;
+}
+
+.add-btn{
+  width:43px;
+  height:43px;
+
+  padding:0;
+
+  border:0;
+
+  border-radius:13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--orange),
+      var(--orange-dark)
+    );
+
+  color:white;
+
+  font-size:22px;
+  font-weight:bold;
+
+  cursor:pointer;
+}
+
+
+/* CUSTOM DRINK */
+
+.custom-drink{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+
+  width:100%;
+}
+
+.custom-row{
+  display:flex;
+  gap:8px;
+}
+
+.custom-row input{
+  flex:1;
+}
+
+
+/* CART */
+
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:15px;
+}
+
+.cartline{
+  padding:13px 0;
+
+  border-bottom:
+    1px dashed #ead9cc;
+}
+
+.cart-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.cart-name{
+  font-weight:700;
+}
+
+.cart-price{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.pending{
+  color:#c77720;
+  font-weight:700;
+}
+
+.qty-control{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  margin-top:10px;
+}
+
+.qty-btn{
+  width:34px;
+  height:34px;
+
+  border:0;
+
+  border-radius:10px;
+
+  background:#f0e4da;
+
+  color:var(--coffee);
+
+  font-size:18px;
+  font-weight:bold;
+
+  cursor:pointer;
+}
+
+.qty-btn.plus{
+  background:var(--coffee);
+  color:white;
+}
+
+.qty-number{
+  min-width:24px;
+  text-align:center;
+  font-weight:bold;
+}
+
+
+/* TOTAL */
+
+.total-box{
+  background:
+    linear-gradient(
+      135deg,
+      #fff3e9,
+      #fbe7d7
+    );
+
+  border-radius:15px;
+
+  padding:14px;
+
+  margin-top:15px;
+}
+
+.total{
+  font-size:21px;
+  font-weight:800;
+  color:var(--coffee);
+}
+
+.total-note{
+  margin-top:5px;
+  font-size:13px;
+  color:#a16a42;
+}
+
+
+/* ORDER BUTTON */
+
+.order{
+  width:100%;
+
+  margin-top:14px;
+
+  padding:16px;
+
+  border:0;
+
+  border-radius:15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--coffee),
+      #75442e
+    );
+
+  color:white;
+
+  font-size:18px;
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 8px 18px
+    rgba(75,46,32,.18);
+}
+
+.order:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+}
+
+
+/* SUCCESS / ERROR */
+
+.success{
+  margin-top:14px;
+
+  padding:15px;
+
+  background:#eaf8ef;
+
+  border:
+    1px solid #b9e4c8;
+
+  border-radius:14px;
+
+  color:#256b42;
+}
+
+.error{
+  margin-top:14px;
+
+  padding:15px;
+
+  background:#fff0ee;
+
+  border:
+    1px solid #f0bbb4;
+
+  border-radius:14px;
+
+  color:#a63c30;
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .item{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .controls{
+    width:100%;
+  }
+
+  .controls select{
+    flex:1;
+    width:100%;
+  }
+
+  .add-btn{
+    min-width:48px;
+  }
+
+  .logo{
+    font-size:38px;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<header>
+  <div class="logo">
+    HAMI <span>Coffee</span>
+  </div>
+
+  <div class="sub">
+    ORDER • TAKE AWAY • ENJOY
+  </div>
+</header>
+
+
+<main class="wrap">
+
+
+<!-- THÔNG TIN KHÁCH -->
+
+<section class="info">
+
+  <h2>👤 Thông tin khách hàng</h2>
+
+  <div class="grid">
+
+    <input
+      id="name"
+      placeholder="Tên khách hàng *">
+
+    <input
+      id="className"
+      placeholder="Lớp / Số bàn">
+
+  </div>
+
+</section>
+
+
+<!-- MENU -->
+
+<div id="menu"></div>
+
+
+<!-- GIỎ HÀNG -->
+
+<section class="cart">
+
+  <h2>🛒 Giỏ hàng của bạn</h2>
+
+  <div id="cart">
+
+    <div class="empty">
+      Chưa có món nào trong giỏ hàng.
+    </div>
+
+  </div>
+
+
+  <div class="total-box">
+
+    <div
+      class="total"
+      id="total">
+
+      Tổng: 0đ
+
+    </div>
+
+    <div
+      class="total-note"
+      id="totalNote">
+
+    </div>
+
+  </div>
+
+
+  <textarea
+    id="note"
+    rows="3"
+    placeholder="Ghi chú: ít đá, ít ngọt, giao tại đâu..."></textarea>
+
+
+  <button
+    class="order"
+    id="orderBtn"
+    onclick="submitOrder()">
+
+    ☕ ĐẶT MÓN NGAY
+
+  </button>
+
+
+  <div id="result"></div>
+
+</section>
+
+</main>
+
+
+
+<script>
+
+
+/* =========================
+   API GOOGLE APPS SCRIPT
+========================= */
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyFT9qfJQvIbsrBjJFlzzjcrHL-5BdTkjUVK4FaBbCuCIZmUlAdz8ofztYo5woLlz44/exec";
+
+
+
+/* =========================
+   MENU
+========================= */
+
+const menu = [
+
+  [
+    "🧋 TRÀ",
+    [
+      ["Trà đào",{L:17000}],
+      ["Trà dâu",{L:17000}],
+      ["Trà vải",{L:17000}]
+    ]
+  ],
+
+
+  [
+    "🥤 SODA",
+    [
+      ["Soda đào",{L:17000}],
+      ["Soda dâu",{L:17000}],
+      ["Soda việt quất",{L:17000}],
+      ["Soda chanh dây",{L:17000}]
+    ]
+  ],
+
+
+  [
+    "☕ CÀ PHÊ",
+    [
+      ["Cà phê đen đá",{M:15000}],
+      ["Cà phê sữa",{M:17000}],
+      ["Cà phê muối",{M:18000}],
+      ["Bạc xỉu",{M:17000,L:20000}]
+    ]
+  ],
+
+
+  [
+    "🥛 SỮA CHUA",
+    [
+      ["Sữa chua đào",{M:17000,L:22000}],
+      ["Sữa chua dâu",{M:17000,L:22000}],
+      ["Sữa chua việt quất",{M:17000,L:22000}],
+      ["Sữa chua chanh dây",{M:17000,L:22000}]
+    ]
+  ],
+
+
+  [
+    "🍵 LATTE",
+    [
+      ["Matcha latte",{M:17000,L:22000}],
+      ["Khoai môn latte",{M:17000,L:22000}],
+      ["Cacao latte",{M:17000,L:22000}]
+    ]
+  ],
+
+
+  [
+    "🥤 KHÁC",
+    [
+      ["Nước chanh",{"Tiêu chuẩn":10000}],
+      ["Lipton",{"Tiêu chuẩn":10000}],
+      ["Trà đường",{"Tiêu chuẩn":10000}],
+      ["Dừa lạnh",{"Tiêu chuẩn":15000}]
+    ]
+  ]
+
+];
+
+
+
+let cart = {};
+
+
+
+function money(n){
+
+  return Number(n)
+    .toLocaleString("vi-VN")
+    + "đ";
+
+}
+
+
+
+/* =========================
+   HIỂN THỊ MENU
+========================= */
+
+function renderMenu(){
+
+  const root =
+    document.getElementById("menu");
+
+
+  menu.forEach(function(category){
+
+    const cat =
+      category[0];
+
+    const items =
+      category[1];
+
+
+    const section =
+      document.createElement("section");
+
+    section.className =
+      "category";
+
+
+    section.innerHTML = `
+
+      <div class="category-title">
+
+        <h2>${cat}</h2>
+
+      </div>
+
+    `;
+
+
+    items.forEach(function(item){
+
+      const name =
+        item[0];
+
+      const sizes =
+        item[1];
+
+
+      const key =
+        name.replace(/\s+/g,"_");
+
+
+      const sizeKeys =
+        Object.keys(sizes);
+
+
+      const options =
+        sizeKeys.map(function(size){
+
+          return `
+            <option value="${size}">
+              ${size} - ${money(sizes[size])}
+            </option>
+          `;
+
+        }).join("");
+
+
+      const priceText =
+        sizeKeys.map(function(size){
+
+          return size + ": " + money(sizes[size]);
+
+        }).join(" | ");
+
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "item";
+
+
+      row.innerHTML = `
+
+        <div>
+
+          <div class="item-name">
+            ${name}
+          </div>
+
+          <div class="price">
+            ${priceText}
+          </div>
+
+        </div>
+
+
+        <div class="controls">
+
+          <select id="size_${key}">
+            ${options}
+          </select>
+
+          <button
+            class="add-btn"
+            onclick="addItem('${name}')">
+
+            +
+
+          </button>
+
+        </div>
+
+      `;
+
+
+      section.appendChild(row);
+
+    });
+
+
+
+    /* NƯỚC NGỌT TỰ NHẬP */
+
+    const customRow =
+      document.createElement("div");
+
+    customRow.className =
+      "item";
+
+
+    customRow.innerHTML = `
+
+      <div class="custom-drink">
+
+        <div>
+
+          <div class="item-name">
+            Nước ngọt các loại
+          </div>
+
+          <div class="price">
+            Nhập loại nước — giá quán sẽ báo sau
+          </div>
+
+        </div>
+
+
+        <div class="custom-row">
+
+          <input
+            id="customDrink"
+            placeholder="Ví dụ: Coca, Pepsi, Sting...">
+
+          <button
+            class="add-btn"
+            onclick="addCustomDrink()">
+
+            +
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    /* Chỉ thêm nước ngọt vào mục KHÁC */
+
+    if(cat === "🥤 KHÁC"){
+
+      section.appendChild(customRow);
+
     }
 
-    if (chatIds.length === 0) {
-      throw new Error("Chưa cấu hình Telegram Chat ID.");
-    }
 
-    if (!data.name) {
-      throw new Error("Chưa có tên khách hàng.");
-    }
+    root.appendChild(section);
 
-    if (!data.items || !data.items.length) {
-      throw new Error("Chưa có món nào.");
-    }
+  });
 
-    // Tạo số đơn hàng
-    const lock = LockService.getScriptLock();
-    lock.waitLock(10000);
+}
 
-    let orderNo;
 
-    try {
-      orderNo = nextOrderNo_();
-    } finally {
-      lock.releaseLock();
-    }
 
-    // Danh sách món
-    const lines = data.items.map(function(x) {
+/* =========================
+   LẤY GIÁ
+========================= */
 
-      const itemName = escapeMd_(x.name);
-      const itemSize = x.size ? ` (${escapeMd_(x.size)})` : "";
-      const qty = Number(x.qty || 1);
+function getPrices(name){
 
-      // Món chưa có giá
-      if (x.price === null || x.price === undefined || x.price === "") {
-        return `• ${itemName}${itemSize} × ${qty} — Giá quán báo sau`;
+  for(const category of menu){
+
+    const items =
+      category[1];
+
+    for(const item of items){
+
+      if(item[0] === name){
+
+        return item[1];
+
       }
 
-      // Món có giá
-      const subTotal = Number(x.price) * qty;
-
-      return `• ${itemName}${itemSize} × ${qty} — ${money_(subTotal)}`;
-    }).join("\n");
-
-    // Tổng tiền
-    let totalText;
-
-    if (data.hasPendingPrice) {
-      totalText =
-        `${money_(data.total || 0)} + món chưa báo giá`;
-    } else {
-      totalText = money_(data.total || 0);
     }
 
-    // Nội dung Telegram
-    const text =
-`🔔 *ĐƠN HÀNG MỚI #${orderNo}*
+  }
 
-👤 *Khách hàng:* ${escapeMd_(data.name)}
+}
 
-🏫 *Lớp / Số bàn:* ${escapeMd_(data.className || "Không có")}
 
-━━━━━━━━━━━━━━
 
-☕ *MÓN ĐÃ CHỌN:*
+/* =========================
+   THÊM MÓN
+========================= */
 
-${lines}
+function addItem(name){
 
-━━━━━━━━━━━━━━
+  const key =
+    name.replace(/\s+/g,"_");
 
-💰 *TỔNG TẠM TÍNH:*
-${escapeMd_(totalText)}
 
-📝 *Ghi chú:*
-${escapeMd_(data.note || "Không có")}
+  const size =
+    document
+      .getElementById("size_" + key)
+      .value;
 
-🕒 *Thời gian:* ${escapeMd_(new Date().toLocaleString("vi-VN", {
-  timeZone: "Asia/Ho_Chi_Minh"
-}))}`;
 
-    const url =
-      `https://api.telegram.org/bot${token}/sendMessage`;
+  const prices =
+    getPrices(name);
 
-    // Gửi đến tất cả Telegram Chat ID
-    const results = chatIds.map(function(chatId) {
 
-      const response = UrlFetchApp.fetch(url, {
-        method: "post",
-        contentType: "application/json",
-        payload: JSON.stringify({
-          chat_id: chatId,
-          text: text,
-          parse_mode: "Markdown"
-        }),
-        muteHttpExceptions: true
+  const id =
+    name + "|" + size;
+
+
+  if(!cart[id]){
+
+    cart[id] = {
+
+      name:name,
+      size:size,
+      price:prices[size],
+      qty:0
+
+    };
+
+  }
+
+
+  cart[id].qty++;
+
+
+  renderCart();
+
+}
+
+
+
+/* =========================
+   THÊM NƯỚC NGỌT
+========================= */
+
+function addCustomDrink(){
+
+  const input =
+    document.getElementById("customDrink");
+
+
+  const drinkName =
+    input.value.trim();
+
+
+  if(!drinkName){
+
+    alert(
+      "Vui lòng nhập loại nước ngọt."
+    );
+
+    return;
+
+  }
+
+
+  const id =
+    "Nước ngọt|" + drinkName;
+
+
+  if(!cart[id]){
+
+    cart[id] = {
+
+      name:
+        "Nước ngọt: " + drinkName,
+
+      size:
+        "Giá quán báo sau",
+
+      price:
+        null,
+
+      qty:
+        0
+
+    };
+
+  }
+
+
+  cart[id].qty++;
+
+
+  input.value = "";
+
+
+  renderCart();
+
+}
+
+
+
+/* =========================
+   THAY ĐỔI SỐ LƯỢNG
+========================= */
+
+function change(id,d){
+
+  cart[id].qty += d;
+
+
+  if(cart[id].qty <= 0){
+
+    delete cart[id];
+
+  }
+
+
+  renderCart();
+
+}
+
+
+
+/* =========================
+   HIỂN THỊ GIỎ HÀNG
+========================= */
+
+function renderCart(){
+
+  const el =
+    document.getElementById("cart");
+
+
+  const keys =
+    Object.keys(cart);
+
+
+  const totalEl =
+    document.getElementById("total");
+
+
+  const totalNote =
+    document.getElementById("totalNote");
+
+
+  if(!keys.length){
+
+    el.innerHTML = `
+
+      <div class="empty">
+        Chưa có món nào trong giỏ hàng.
+      </div>
+
+    `;
+
+
+    totalEl.textContent =
+      "Tổng: 0đ";
+
+
+    totalNote.textContent =
+      "";
+
+
+    return;
+
+  }
+
+
+  let total = 0;
+
+  let hasPendingPrice = false;
+
+
+  el.innerHTML = "";
+
+
+  keys.forEach(function(id){
+
+    const x =
+      cart[id];
+
+
+    let priceHtml;
+
+
+    if(
+      x.price === null ||
+      x.price === undefined
+    ){
+
+      hasPendingPrice = true;
+
+
+      priceHtml = `
+
+        <div class="cart-price pending">
+          Giá quán báo sau
+        </div>
+
+      `;
+
+    }
+
+    else{
+
+      const sub =
+        x.price * x.qty;
+
+
+      total += sub;
+
+
+      priceHtml = `
+
+        <div class="cart-price">
+
+          ${money(x.price)}
+          ×
+          ${x.qty}
+
+          =
+          <b>${money(sub)}</b>
+
+        </div>
+
+      `;
+
+    }
+
+
+    el.innerHTML += `
+
+      <div class="cartline">
+
+        <div class="cart-top">
+
+          <div>
+
+            <div class="cart-name">
+
+              ${x.name}
+
+              ${x.size &&
+                x.size !== "Giá quán báo sau"
+                ? "(" + x.size + ")"
+                : ""
+              }
+
+            </div>
+
+            ${priceHtml}
+
+          </div>
+
+        </div>
+
+
+        <div class="qty-control">
+
+          <button
+            class="qty-btn"
+            onclick='change(${JSON.stringify(id)},-1)'>
+
+            −
+
+          </button>
+
+
+          <div class="qty-number">
+            ${x.qty}
+          </div>
+
+
+          <button
+            class="qty-btn plus"
+            onclick='change(${JSON.stringify(id)},1)'>
+
+            +
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+
+  totalEl.textContent =
+    "Tổng tạm tính: " +
+    money(total);
+
+
+  if(hasPendingPrice){
+
+    totalNote.textContent =
+      "Có món chưa có giá. Quán sẽ báo giá sau.";
+
+  }
+
+  else{
+
+    totalNote.textContent =
+      "";
+
+  }
+
+}
+
+
+
+/* =========================
+   GỬI ĐƠN
+========================= */
+
+async function submitOrder(){
+
+  const name =
+    document
+      .getElementById("name")
+      .value
+      .trim();
+
+
+  const className =
+    document
+      .getElementById("className")
+      .value
+      .trim();
+
+
+  const items =
+    Object.values(cart);
+
+
+  const note =
+    document
+      .getElementById("note")
+      .value
+      .trim();
+
+
+  const result =
+    document.getElementById("result");
+
+
+  if(!name){
+
+    alert(
+      "Vui lòng nhập tên khách hàng."
+    );
+
+    return;
+
+  }
+
+
+  if(!items.length){
+
+    alert(
+      "Vui lòng chọn ít nhất 1 món."
+    );
+
+    return;
+
+  }
+
+
+  const total =
+    items.reduce(function(sum,x){
+
+      if(
+        x.price === null ||
+        x.price === undefined
+      ){
+
+        return sum;
+
+      }
+
+
+      return sum +
+        (x.price * x.qty);
+
+    },0);
+
+
+  const hasPendingPrice =
+    items.some(function(x){
+
+      return
+        x.price === null ||
+        x.price === undefined;
+
+    });
+
+
+  const btn =
+    document.getElementById("orderBtn");
+
+
+  btn.disabled = true;
+
+  btn.textContent =
+    "ĐANG GỬI ĐƠN...";
+
+
+  result.innerHTML = "";
+
+
+  try{
+
+    const response =
+      await fetch(API_URL,{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body:JSON.stringify({
+
+          name:name,
+
+          className:className,
+
+          items:items,
+
+          note:note,
+
+          total:total,
+
+          hasPendingPrice:
+            hasPendingPrice
+
+        })
+
       });
 
-      const telegram =
-        JSON.parse(response.getContentText());
 
-      return {
-        chatId: chatId,
-        ok: telegram.ok,
-        error: telegram.ok
-          ? null
-          : telegram.description
-      };
-    });
+    const text =
+      await response.text();
 
-    const success = results.some(function(r) {
-      return r.ok;
-    });
 
-    if (!success) {
-      throw new Error(
-        results
-          .map(function(r) {
-            return r.error;
-          })
-          .filter(Boolean)
-          .join(" | ") ||
-        "Không gửi được thông báo Telegram."
-      );
+    let data;
+
+
+    try{
+
+      data =
+        JSON.parse(text);
+
     }
 
-    return json_({
-      ok: true,
-      orderNo: orderNo
+    catch(err){
+
+      throw new Error(
+        "Máy chủ trả về dữ liệu không hợp lệ."
+      );
+
+    }
+
+
+    if(!data.ok){
+
+      throw new Error(
+        data.error ||
+        "Không gửi được đơn."
+      );
+
+    }
+
+
+    result.innerHTML = `
+
+      <div class="success">
+
+        <b>✅ Đặt món thành công!</b>
+
+        <br><br>
+
+        Mã đơn của bạn:
+        <b>#${data.orderNo}</b>
+
+      </div>
+
+    `;
+
+
+    cart = {};
+
+
+    renderCart();
+
+
+    document
+      .getElementById("note")
+      .value = "";
+
+
+    document
+      .getElementById("name")
+      .value = "";
+
+
+    document
+      .getElementById("className")
+      .value = "";
+
+
+    window.scrollTo({
+
+      top:
+        document.body.scrollHeight,
+
+      behavior:
+        "smooth"
+
     });
 
-  } catch (err) {
-
-    return json_({
-      ok: false,
-      error: String(err.message || err)
-    });
   }
+
+
+  catch(error){
+
+    result.innerHTML = `
+
+      <div class="error">
+
+        <b>❌ Chưa gửi được đơn</b>
+
+        <br><br>
+
+        ${error.message}
+
+      </div>
+
+    `;
+
+  }
+
+
+  finally{
+
+    btn.disabled = false;
+
+    btn.textContent =
+      "☕ ĐẶT MÓN NGAY";
+
+  }
+
 }
 
 
-function nextOrderNo_() {
 
-  const props =
-    PropertiesService.getScriptProperties();
+/* KHỞI ĐỘNG */
 
-  const n =
-    Number(
-      props.getProperty("ORDER_COUNTER") || "0"
-    ) + 1;
+renderMenu();
 
-  props.setProperty(
-    "ORDER_COUNTER",
-    String(n)
-  );
+</script>
 
-  return String(n).padStart(3, "0");
-}
-
-
-function money_(n) {
-  return Number(n || 0)
-    .toLocaleString("vi-VN") + "đ";
-}
-
-
-function escapeMd_(s) {
-
-  return String(s || "")
-    .replace(
-      /([_*[\]`])/g,
-      "\\$1"
-    );
-}
-
-
-function json_(obj) {
-
-  return ContentService
-    .createTextOutput(
-      JSON.stringify(obj)
-    )
-    .setMimeType(
-      ContentService.MimeType.JSON
-    );
-}
+</body>
+</html>
