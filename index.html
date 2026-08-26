@@ -4,21 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HAMI Coffee - Đặt món</title>
+<title>HAMI Coffee - Order</title>
 
 <style>
 :root{
-  --red:#df1f2f;
-  --red-dark:#bd1523;
-  --cream:#fffaf0;
-  --cream-2:#f8efd9;
-  --card:#ffffff;
-  --text:#3f3b38;
-  --muted:#77716b;
-  --line:#e8dfd0;
-  --green:#7f944d;
-  --green-light:#edf3e3;
-  --warning:#9b6b22;
+  --red:#c91d28;
+  --red-dark:#a8141e;
+  --pink:#fff5f5;
+  --text:#2d2525;
+  --muted:#766b6b;
+  --border:#eee3e3;
+  --white:#ffffff;
+  --shadow:0 8px 30px rgba(70,30,30,.08);
 }
 
 *{
@@ -31,448 +28,472 @@ html{
 
 body{
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#faf7f6;
   color:var(--text);
-  background:
-    radial-gradient(circle at top right, #fff2d7 0, transparent 28%),
-    radial-gradient(circle at left center, #fff6e5 0, transparent 25%),
-    var(--cream);
 }
 
-.hero{
+/* ================= HEADER ================= */
+
+.header{
+  background:linear-gradient(135deg,#c71922,#9e1018);
+  color:#fff;
   text-align:center;
-  padding:48px 20px 34px;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.72), rgba(255,247,230,.9));
-  border-bottom:1px solid #eadfcf;
+  padding:24px 15px 28px;
+  box-shadow:0 3px 15px rgba(0,0,0,.12);
 }
 
-.decor{
-  font-size:28px;
-  letter-spacing:8px;
-  margin-bottom:8px;
-}
-
-.logo{
-  color:var(--red);
-  font-size:58px;
-  font-weight:900;
+.brand{
+  font-family:Georgia,serif;
+  font-size:42px;
   font-style:italic;
-  letter-spacing:-3px;
-  line-height:1;
-}
-
-.sublogo{
-  margin-top:16px;
-  font-size:17px;
   font-weight:bold;
-  letter-spacing:10px;
-  color:#4b4742;
+  letter-spacing:1px;
 }
 
 .tagline{
-  margin-top:24px;
-  font-size:20px;
-  color:#625d57;
+  margin-top:5px;
+  font-size:12px;
+  letter-spacing:4px;
+  opacity:.9;
 }
 
-.wrap{
-  width:min(1100px, calc(100% - 28px));
-  margin:0 auto;
-  padding:28px 0 50px;
+.order-fast{
+  margin-top:18px;
+  display:inline-block;
+  background:#fff;
+  color:var(--red);
+  padding:9px 18px;
+  border-radius:30px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+/* ================= MAIN ================= */
+
+.container{
+  max-width:850px;
+  margin:auto;
+  padding:18px 14px 45px;
+}
+
+/* ================= WELCOME ================= */
+
+.welcome{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  margin-top:-12px;
+  box-shadow:var(--shadow);
+  text-align:center;
+}
+
+.welcome h1{
+  margin:0;
+  color:#b91c27;
+  font-size:23px;
+}
+
+.welcome p{
+  color:var(--muted);
+  margin:9px 0 0;
+  font-size:14px;
+  line-height:1.5;
+}
+
+/* ================= SECTION ================= */
+
+.section{
+  margin-top:18px;
+  background:var(--white);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
 }
 
 .section-title{
   display:flex;
   align-items:center;
-  gap:12px;
-  margin:28px 0 18px;
-  font-size:30px;
-  font-weight:800;
+  gap:8px;
+  color:#b91c27;
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:14px;
 }
 
-.section-title .star{
-  font-size:34px;
+/* ================= CUSTOMER ================= */
+
+.customer-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.customer-grid .full{
+  grid-column:1 / -1;
+}
+
+.input-group label{
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:6px;
+  color:#554c4c;
+}
+
+.input-group input,
+.input-group textarea{
+  width:100%;
+  border:1px solid #e5dada;
+  border-radius:10px;
+  padding:12px;
+  font-size:15px;
+  outline:none;
+  background:#fff;
+}
+
+.input-group input:focus,
+.input-group textarea:focus{
+  border-color:#c71922;
+  box-shadow:0 0 0 3px rgba(199,25,34,.08);
+}
+
+/* ================= MENU CATEGORY ================= */
+
+.menu-section{
+  margin-top:22px;
+}
+
+.category-title{
+  margin:22px 4px 12px;
+  color:#b91c27;
+  font-size:19px;
+  font-weight:bold;
 }
 
 .menu-grid{
   display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:20px;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
 }
 
-.drink-card{
-  background:rgba(255,255,255,.88);
-  border:1px solid var(--line);
-  border-radius:26px;
+/* ================= PRODUCT CARD ================= */
+
+.product{
+  background:#fff;
+  border-radius:17px;
   overflow:hidden;
-  box-shadow:0 8px 25px rgba(105,82,45,.08);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
   transition:.2s;
 }
 
-.drink-card:hover{
-  transform:translateY(-3px);
+.product:hover{
+  transform:translateY(-2px);
 }
 
-.drink-image{
-  height:180px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:96px;
-  background:
-    radial-gradient(circle at center, #fff 0%, #fffaf1 45%, #f5ead5 100%);
-  border-bottom:1px solid #f1e8dc;
-}
-
-.drink-content{
-  padding:20px;
-}
-
-.drink-name{
-  font-size:25px;
-  font-weight:800;
-  margin-bottom:12px;
-}
-
-.drink-price{
-  min-height:27px;
-  color:#8d2d2d;
-  font-size:18px;
-  font-weight:bold;
-  margin-bottom:16px;
-}
-
-.drink-price.pending{
-  color:var(--warning);
-}
-
-.select-size{
+.product-image{
   width:100%;
-  padding:15px 16px;
-  border:1px solid #ddd3c4;
-  border-radius:16px;
-  background:#fff;
-  color:#49433d;
-  font-size:17px;
-  outline:none;
-  margin-bottom:16px;
+  height:165px;
+  object-fit:cover;
+  display:block;
+  background:#f1eeee;
 }
 
-.qty-row{
-  display:flex;
-  align-items:center;
-  gap:16px;
+.product-body{
+  padding:13px;
 }
 
-.qty-btn{
-  width:64px;
-  height:64px;
-  border:0;
-  border-radius:50%;
-  font-size:35px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.minus{
-  background:#eef0e8;
-  color:#778063;
-}
-
-.plus{
-  background:var(--green);
-  color:white;
-}
-
-.qty-number{
-  min-width:30px;
-  text-align:center;
-  font-size:25px;
+.product-name{
+  font-size:16px;
   font-weight:bold;
+  min-height:38px;
 }
 
-.order-box{
-  margin-top:32px;
-  background:rgba(255,255,255,.92);
-  border:1px solid var(--line);
-  border-radius:28px;
-  padding:28px;
-  box-shadow:0 8px 25px rgba(105,82,45,.08);
+.product-price{
+  color:#c71922;
+  font-size:13px;
+  margin-top:5px;
+  min-height:20px;
 }
+
+.product-controls{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.product-controls select{
+  flex:1;
+  border:1px solid #e2d7d7;
+  border-radius:9px;
+  padding:9px 7px;
+  background:#fff;
+}
+
+.add-btn{
+  min-width:45px;
+  border:none;
+  border-radius:9px;
+  background:var(--red);
+  color:#fff;
+  font-size:20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.add-btn:hover{
+  background:var(--red-dark);
+}
+
+/* ================= SPECIAL SOFT DRINK ================= */
+
+.soft-drink-card{
+  background:#fff8f8;
+  border:1px dashed #d98b91;
+  border-radius:17px;
+  padding:16px;
+  margin-top:14px;
+  box-shadow:var(--shadow);
+}
+
+.soft-drink-title{
+  font-size:17px;
+  font-weight:bold;
+  color:#b91c27;
+}
+
+.soft-drink-note{
+  font-size:13px;
+  color:#766b6b;
+  margin:5px 0 12px;
+  line-height:1.45;
+}
+
+.soft-drink-row{
+  display:flex;
+  gap:10px;
+}
+
+.soft-drink-row input{
+  flex:1;
+  border:1px solid #e2cccc;
+  border-radius:10px;
+  padding:11px;
+  font-size:15px;
+}
+
+.soft-drink-row button{
+  border:none;
+  border-radius:10px;
+  background:var(--red);
+  color:#fff;
+  padding:0 16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* ================= CART ================= */
 
 .cart-empty{
-  color:var(--muted);
+  color:#9a9090;
   text-align:center;
-  padding:20px 0;
+  padding:12px;
+  font-size:14px;
 }
 
 .cart-item{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  padding:15px 0;
-  border-bottom:1px dashed #d9cebd;
+  padding:13px 0;
+  border-bottom:1px dashed #e6dada;
 }
 
-.cart-item:last-child{
-  border-bottom:0;
+.cart-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
 }
 
 .cart-name{
-  font-size:18px;
   font-weight:bold;
 }
 
-.cart-detail{
-  color:var(--muted);
-  margin-top:5px;
+.cart-size{
+  color:#8c8080;
+  font-size:13px;
+  margin-top:3px;
 }
 
 .cart-price{
-  text-align:right;
+  color:#b91c27;
   font-weight:bold;
-  color:#822b2b;
+  text-align:right;
   white-space:nowrap;
 }
 
-.cart-pending{
-  color:var(--warning);
+.cart-bottom{
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-.summary{
-  border-top:2px solid #eee5d9;
-  margin-top:16px;
-  padding-top:20px;
+.qty-control{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.qty-btn{
+  width:30px;
+  height:30px;
+  border:none;
+  border-radius:8px;
+  background:#f1e7e7;
+  color:#9e161e;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.qty-number{
+  min-width:18px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.cart-subtotal{
+  font-size:13px;
+  color:#706565;
+}
+
+.total-box{
+  margin-top:15px;
+  padding-top:14px;
+  border-top:2px solid #f0e1e1;
 }
 
 .total-row{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  font-size:24px;
-  font-weight:800;
+  font-size:20px;
+  font-weight:bold;
+  color:#b91c27;
 }
 
-.total-price{
-  color:#a31320;
-  font-size:32px;
-}
-
-.pending-note{
+.unpriced-warning{
+  margin-top:9px;
+  color:#9a6a16;
+  font-size:13px;
+  line-height:1.45;
   display:none;
-  margin-top:14px;
-  padding:13px 15px;
-  border-radius:14px;
-  background:#fff6df;
-  color:#8a6423;
-  font-weight:bold;
 }
 
-.customer-box{
-  margin-top:28px;
-  padding-top:26px;
-  border-top:2px solid #eee5d9;
-}
+/* ================= ORDER BUTTON ================= */
 
-.form-title{
-  font-size:25px;
-  font-weight:800;
-  margin-bottom:20px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-
-.field.full{
-  grid-column:1/-1;
-}
-
-label{
-  font-size:18px;
-  font-weight:bold;
-}
-
-.optional{
-  color:#777;
-  font-weight:normal;
-}
-
-input,
-textarea{
+.order-btn{
   width:100%;
-  border:1px solid #ddd3c4;
-  background:#fff;
-  color:#423d38;
-  border-radius:17px;
+  margin-top:16px;
+  border:none;
+  background:linear-gradient(135deg,#d2222b,#a90e18);
+  color:#fff;
   padding:16px;
-  font-size:18px;
-  outline:none;
-}
-
-input:focus,
-textarea:focus,
-.select-size:focus{
-  border-color:var(--green);
-  box-shadow:0 0 0 3px rgba(127,148,77,.12);
-}
-
-textarea{
-  min-height:120px;
-  resize:vertical;
-}
-
-.order-button{
-  width:100%;
-  border:0;
-  margin-top:24px;
-  padding:21px;
-  border-radius:20px;
-  background:linear-gradient(135deg, #ff4b5b, #df1423);
-  color:white;
-  font-size:27px;
-  font-weight:900;
+  border-radius:13px;
+  font-size:17px;
+  font-weight:bold;
   cursor:pointer;
-  box-shadow:0 12px 24px rgba(207,25,40,.18);
+  box-shadow:0 6px 18px rgba(180,20,30,.2);
 }
 
-.order-button:disabled{
+.order-btn:disabled{
   opacity:.65;
   cursor:not-allowed;
 }
 
-.order-help{
-  text-align:center;
-  color:#777;
-  font-size:17px;
-  margin-top:15px;
-}
-
 .result{
-  display:none;
-  margin-top:22px;
-  padding:22px;
-  border-radius:20px;
-  font-size:20px;
-  font-weight:bold;
-  line-height:1.6;
+  margin-top:14px;
 }
 
-.result.success{
-  display:block;
-  background:#edf7e9;
-  border:1px solid #b9d8b0;
-  color:#456c42;
+.success{
+  background:#edf9f0;
+  border:1px solid #b8e2c1;
+  color:#26733a;
+  border-radius:12px;
+  padding:14px;
+  line-height:1.55;
 }
 
-.result.error{
-  display:block;
-  background:#fff0ee;
-  border:1px solid #eab6af;
-  color:#9b342a;
+.error{
+  background:#fff0f0;
+  border:1px solid #f1b7b7;
+  color:#a31d1d;
+  border-radius:12px;
+  padding:14px;
 }
+
+/* ================= FOOTER ================= */
 
 .footer{
   text-align:center;
-  padding:28px 15px;
-  color:#746e66;
+  color:#9b9090;
+  font-size:13px;
+  margin-top:24px;
+  line-height:1.6;
 }
 
-@media(max-width:700px){
+.footer strong{
+  color:#b91c27;
+}
 
-  .hero{
-    padding:36px 15px 28px;
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+  .brand{
+    font-size:37px;
   }
 
-  .logo{
-    font-size:52px;
+  .customer-grid{
+    grid-template-columns:1fr;
   }
 
-  .sublogo{
-    font-size:14px;
-    letter-spacing:8px;
-  }
-
-  .tagline{
-    font-size:17px;
+  .customer-grid .full{
+    grid-column:auto;
   }
 
   .menu-grid{
     grid-template-columns:1fr 1fr;
-    gap:12px;
-  }
-
-  .drink-card{
-    border-radius:20px;
-  }
-
-  .drink-image{
-    height:125px;
-    font-size:68px;
-  }
-
-  .drink-content{
-    padding:15px;
-  }
-
-  .drink-name{
-    font-size:19px;
-  }
-
-  .drink-price{
-    font-size:15px;
-    min-height:42px;
-  }
-
-  .select-size{
-    padding:12px;
-    font-size:15px;
-  }
-
-  .qty-row{
     gap:10px;
   }
 
-  .qty-btn{
-    width:48px;
-    height:48px;
-    font-size:27px;
+  .product-image{
+    height:125px;
   }
 
-  .qty-number{
-    font-size:20px;
+  .product-body{
+    padding:10px;
   }
 
-  .section-title{
-    font-size:25px;
+  .product-name{
+    font-size:14px;
   }
 
-  .form-grid{
-    grid-template-columns:1fr;
+  .product-controls{
+    flex-direction:column;
   }
 
-  .order-box{
-    padding:20px;
-    border-radius:22px;
+  .add-btn{
+    width:100%;
+    height:38px;
   }
 
-  .total-price{
-    font-size:27px;
+  .soft-drink-row{
+    flex-direction:column;
   }
 
-  .order-button{
-    font-size:23px;
+  .soft-drink-row button{
+    padding:12px;
   }
 }
 </style>
@@ -480,139 +501,124 @@ textarea{
 
 <body>
 
-<header class="hero">
-  <div class="decor">🌿 ✦ ♡ ✦ 🌿</div>
-
-  <div class="logo">HAMI</div>
-
-  <div class="sublogo">COFFEE</div>
-
-  <div class="tagline">
-    Chọn món ngon · Gửi đơn · Quán nhận ngay
-  </div>
+<header class="header">
+  <div class="brand">Hami</div>
+  <div class="tagline">COFFEE • ORDER</div>
+  <div class="order-fast">ORDER NHANH • GỬI ĐƠN NGAY</div>
 </header>
 
+<main class="container">
 
-<main class="wrap">
+  <section class="welcome">
+    <h1>Chọn món yêu thích của bạn ☕</h1>
+    <p>
+      Chọn đồ uống, số lượng và gửi đơn. Quán sẽ nhận được thông tin đơn hàng của bạn.
+    </p>
+  </section>
 
-  <h2 class="section-title">
-    <span class="star">⭐</span>
-    MÓN NỔI BẬT
-  </h2>
+  <!-- THÔNG TIN KHÁCH -->
+  <section class="section">
 
-  <div class="menu-grid" id="menuGrid"></div>
-
-
-  <section class="order-box">
-
-    <h2 class="section-title" style="margin-top:0">
-      🛒 GIỎ HÀNG
-    </h2>
-
-    <div id="cart">
-      <div class="cart-empty">
-        Chưa có món nào được chọn.
-      </div>
+    <div class="section-title">
+      👤 Thông tin khách hàng
     </div>
 
-    <div class="summary">
+    <div class="customer-grid">
 
-      <div class="total-row">
-        <span>Tổng tạm tính</span>
-        <span class="total-price" id="total">0đ</span>
+      <div class="input-group">
+        <label>Tên của bạn *</label>
+        <input
+          id="name"
+          type="text"
+          placeholder="Nhập tên của bạn"
+        >
       </div>
 
-      <div class="pending-note" id="pendingNote">
-        ⚠ Có món chưa báo giá. Quán sẽ báo giá sau.
+      <div class="input-group">
+        <label>Số điện thoại</label>
+        <input
+          id="phone"
+          type="tel"
+          placeholder="Không bắt buộc"
+        >
       </div>
 
-    </div>
-
-
-    <div class="customer-box">
-
-      <div class="form-title">Thông tin đặt món</div>
-
-      <div class="form-grid">
-
-        <div class="field full">
-          <label>Tên của bạn <span style="color:#d71927">*</span></label>
-          <input
-            type="text"
-            id="customerName"
-            placeholder="Nhập tên của bạn"
-          >
-        </div>
-
-        <div class="field">
-          <label>
-            Số điện thoại
-            <span class="optional">(không bắt buộc)</span>
-          </label>
-
-          <input
-            type="tel"
-            id="phone"
-            placeholder="Nhập số điện thoại"
-          >
-        </div>
-
-        <div class="field">
-          <label>
-            Lớp / Số bàn
-            <span class="optional">(không bắt buộc)</span>
-          </label>
-
-          <input
-            type="text"
-            id="className"
-            placeholder="Nhập lớp hoặc số bàn"
-          >
-        </div>
-
-        <div class="field full">
-          <label>Ghi chú cho quán</label>
-
-          <textarea
-            id="note"
-            placeholder="Ví dụ: ít đá, ít ngọt..."
-          ></textarea>
-        </div>
-
+      <div class="input-group">
+        <label>Lớp / Số bàn</label>
+        <input
+          id="className"
+          type="text"
+          placeholder="Không bắt buộc"
+        >
       </div>
 
-
-      <button
-        class="order-button"
-        id="orderButton"
-        onclick="submitOrder()"
-      >
-        🛩 ĐẶT MÓN
-      </button>
-
-      <div class="order-help">
-        Đơn hàng sẽ được gửi trực tiếp về quán.
+      <div class="input-group full">
+        <label>Ghi chú cho quán</label>
+        <textarea
+          id="note"
+          rows="3"
+          placeholder="Ví dụ: ít đá, ít ngọt..."
+        ></textarea>
       </div>
-
-
-      <div id="result" class="result"></div>
 
     </div>
 
   </section>
 
+  <!-- MENU -->
+  <div id="menuRoot"></div>
+
+  <!-- GIỎ HÀNG -->
+  <section class="section">
+
+    <div class="section-title">
+      🛒 Đơn hàng của bạn
+    </div>
+
+    <div id="cart">
+      <div class="cart-empty">Bạn chưa chọn món nào.</div>
+    </div>
+
+    <div class="total-box">
+
+      <div class="total-row">
+        <span>Tổng tạm tính</span>
+        <span id="total">0đ</span>
+      </div>
+
+      <div
+        class="unpriced-warning"
+        id="unpricedWarning"
+      >
+        ⚠ Đơn hàng có món chưa báo giá. Quán sẽ báo giá sau.
+      </div>
+
+    </div>
+
+    <button
+      class="order-btn"
+      id="orderBtn"
+      onclick="submitOrder()"
+    >
+      🔴 ĐẶT MÓN
+    </button>
+
+    <div id="result" class="result"></div>
+
+  </section>
+
+  <div class="footer">
+    <strong>HAMI COFFEE</strong><br>
+    Cảm ơn bạn đã đặt món ❤️
+  </div>
+
 </main>
-
-
-<footer class="footer">
-  ❤️ Cảm ơn bạn đã chọn HAMI Coffee
-</footer>
 
 
 <script>
 
 /* =====================================================
-   URL APPS SCRIPT
+   API APPS SCRIPT
 ===================================================== */
 
 const API_URL =
@@ -620,185 +626,185 @@ const API_URL =
 
 
 /* =====================================================
-   MENU - GIỮ NGUYÊN TÊN MÓN, SIZE VÀ GIÁ
+   MENU
+   Bạn có thể thay link ảnh sau này.
 ===================================================== */
 
 const menu = [
 
-  {
-    name: "Trà đào",
-    icon: "🍑",
-    prices: { L: 17000 }
-  },
+{
+  category:"🧋 TRÀ",
+  items:[
 
-  {
-    name: "Trà dâu",
-    icon: "🍓",
-    prices: { L: 17000 }
-  },
+    {
+      name:"Trà đào",
+      sizes:{L:17000},
+      image:"https://images.unsplash.com/photo-1499638673689-79a0b5115d87?auto=format&fit=crop&w=600&q=80"
+    },
 
-  {
-    name: "Trà vải",
-    icon: "🧋",
-    prices: { L: 17000 }
-  },
+    {
+      name:"Trà dâu",
+      sizes:{L:17000},
+      image:"https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=600&q=80"
+    },
 
-  {
-    name: "Soda đào",
-    icon: "🥤",
-    prices: { L: 17000 }
-  },
-
-  {
-    name: "Soda dâu",
-    icon: "🥤",
-    prices: { L: 17000 }
-  },
-
-  {
-    name: "Soda việt quất",
-    icon: "🫐",
-    prices: { L: 17000 }
-  },
-
-  {
-    name: "Soda chanh dây",
-    icon: "🍹",
-    prices: { L: 17000 }
-  },
-
-  {
-    name: "Cà phê đen đá",
-    icon: "☕",
-    prices: { M: 15000 }
-  },
-
-  {
-    name: "Cà phê sữa",
-    icon: "🥛",
-    prices: { M: 17000 }
-  },
-
-  {
-    name: "Cà phê muối",
-    icon: "☕",
-    prices: { M: 18000 }
-  },
-
-  {
-    name: "Bạc xỉu",
-    icon: "🥛",
-    prices: {
-      M: 17000,
-      L: 20000
+    {
+      name:"Trà vải",
+      sizes:{L:17000},
+      image:"https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80"
     }
-  },
 
-  {
-    name: "Sữa chua đào",
-    icon: "🍑",
-    prices: {
-      M: 17000,
-      L: 22000
+  ]
+},
+
+{
+  category:"🥤 SODA",
+  items:[
+
+    {
+      name:"Soda đào",
+      sizes:{L:17000},
+      image:"https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Soda dâu",
+      sizes:{L:17000},
+      image:"https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Soda việt quất",
+      sizes:{L:17000},
+      image:"https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Soda chanh dây",
+      sizes:{L:17000},
+      image:"https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80"
     }
-  },
 
-  {
-    name: "Sữa chua dâu",
-    icon: "🍓",
-    prices: {
-      M: 17000,
-      L: 22000
+  ]
+},
+
+{
+  category:"☕ CÀ PHÊ",
+  items:[
+
+    {
+      name:"Cà phê đen đá",
+      sizes:{M:15000},
+      image:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Cà phê sữa",
+      sizes:{M:17000},
+      image:"https://images.unsplash.com/photo-1497636577773-f1231844b336?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Cà phê muối",
+      sizes:{M:18000},
+      image:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Bạc xỉu",
+      sizes:{M:17000,L:20000},
+      image:"https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80"
     }
-  },
 
-  {
-    name: "Sữa chua việt quất",
-    icon: "🫐",
-    prices: {
-      M: 17000,
-      L: 22000
+  ]
+},
+
+{
+  category:"🥛 SỮA CHUA",
+  items:[
+
+    {
+      name:"Sữa chua đào",
+      sizes:{M:17000,L:22000},
+      image:"https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Sữa chua dâu",
+      sizes:{M:17000,L:22000},
+      image:"https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Sữa chua việt quất",
+      sizes:{M:17000,L:22000},
+      image:"https://images.unsplash.com/photo-1571212515416-fef01fc43637?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Sữa chua chanh dây",
+      sizes:{M:17000,L:22000},
+      image:"https://images.unsplash.com/photo-1571212515416-fef01fc43637?auto=format&fit=crop&w=600&q=80"
     }
-  },
 
-  {
-    name: "Sữa chua chanh dây",
-    icon: "🥭",
-    prices: {
-      M: 17000,
-      L: 22000
+  ]
+},
+
+{
+  category:"🍵 LATTE",
+  items:[
+
+    {
+      name:"Matcha latte",
+      sizes:{M:17000,L:22000},
+      image:"https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Khoai môn latte",
+      sizes:{M:17000,L:22000},
+      image:"https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Cacao latte",
+      sizes:{M:17000,L:22000},
+      image:"https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80"
     }
-  },
 
-  {
-    name: "Matcha latte",
-    icon: "🍵",
-    prices: {
-      M: 17000,
-      L: 22000
+  ]
+},
+
+{
+  category:"🥤 KHÁC",
+  items:[
+
+    {
+      name:"Nước chanh",
+      sizes:{"Tiêu chuẩn":10000},
+      image:"https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Lipton",
+      sizes:{"Tiêu chuẩn":10000},
+      image:"https://images.unsplash.com/photo-1499638673689-79a0b5115d87?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Trà đường",
+      sizes:{"Tiêu chuẩn":10000},
+      image:"https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+      name:"Dừa lạnh",
+      sizes:{"Tiêu chuẩn":15000},
+      image:"https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=600&q=80"
     }
-  },
 
-  {
-    name: "Khoai môn latte",
-    icon: "🧋",
-    prices: {
-      M: 17000,
-      L: 22000
-    }
-  },
-
-  {
-    name: "Cacao latte",
-    icon: "🍫",
-    prices: {
-      M: 17000,
-      L: 22000
-    }
-  },
-
-  {
-    name: "Nước chanh",
-    icon: "🍋",
-    prices: {
-      "Tiêu chuẩn": 10000
-    }
-  },
-
-  {
-    name: "Lipton",
-    icon: "🍋",
-    prices: {
-      "Tiêu chuẩn": 10000
-    }
-  },
-
-  {
-    name: "Trà đường",
-    icon: "🍵",
-    prices: {
-      "Tiêu chuẩn": 10000
-    }
-  },
-
-  {
-    name: "Dừa lạnh",
-    icon: "🥥",
-    prices: {
-      "Tiêu chuẩn": 15000
-    }
-  },
-
-  {
-    name: "Nước ngọt các loại",
-    icon: "🥤",
-    pending: true,
-    prices: {
-      "Quán báo giá": null
-    }
-  }
-
-];
+  ]
+};
 
 
 /* =====================================================
@@ -808,18 +814,15 @@ const menu = [
 let cart = {};
 
 
-/* =====================================================
-   ĐỊNH DẠNG TIỀN
-===================================================== */
+function money(n){
+  return Number(n || 0).toLocaleString("vi-VN") + "đ";
+}
 
-function money(value){
 
-  if(value === null || value === undefined){
-    return "Quán báo giá sau";
-  }
-
-  return Number(value).toLocaleString("vi-VN") + "đ";
-
+function createKey(name){
+  return name
+    .replace(/\s+/g,"_")
+    .replace(/[^\wÀ-ỹ]/g,"");
 }
 
 
@@ -829,101 +832,75 @@ function money(value){
 
 function renderMenu(){
 
-  const root = document.getElementById("menuGrid");
+  const root = document.getElementById("menuRoot");
 
   root.innerHTML = "";
 
-  menu.forEach((item, index) => {
+  menu.forEach(category => {
 
-    const sizes = Object.keys(item.prices);
+    const section = document.createElement("section");
 
-    let priceText = "";
+    section.className = "menu-section";
 
-    if(item.pending){
+    section.innerHTML =
+      `<div class="category-title">${category.category}</div>`;
 
-      priceText = "Quán báo giá sau";
+    const grid = document.createElement("div");
 
-    } else {
-
-      priceText = sizes
-        .map(size => size + ": " + money(item.prices[size]))
-        .join(" | ");
-
-    }
+    grid.className = "menu-grid";
 
 
-    let options = "";
+    category.items.forEach(item => {
 
-    sizes.forEach(size => {
+      const key = createKey(item.name);
 
-      const price = item.prices[size];
+      const sizes = Object.keys(item.sizes);
 
-      if(price === null){
-
-        options += `
-          <option value="${size}">
-            ${size}
-          </option>
-        `;
-
-      } else {
-
-        options += `
-          <option value="${size}">
-            ${size} - ${money(price)}
-          </option>
-        `;
-
-      }
-
-    });
+      const options = sizes.map(size =>
+        `<option value="${size}">
+          ${size} - ${money(item.sizes[size])}
+        </option>`
+      ).join("");
 
 
-    root.innerHTML += `
+      const priceText = sizes.map(size =>
+        `${size}: ${money(item.sizes[size])}`
+      ).join(" | ");
 
-      <article class="drink-card">
 
-        <div class="drink-image">
-          ${item.icon}
-        </div>
+      const card = document.createElement("div");
 
-        <div class="drink-content">
+      card.className = "product";
 
-          <div class="drink-name">
+
+      card.innerHTML = `
+
+        <img
+          class="product-image"
+          src="${item.image}"
+          alt="${item.name}"
+          loading="lazy"
+        >
+
+        <div class="product-body">
+
+          <div class="product-name">
             ${item.name}
           </div>
 
-          <div class="drink-price ${item.pending ? "pending" : ""}">
+          <div class="product-price">
             ${priceText}
           </div>
 
-          <select
-            class="select-size"
-            id="size_${index}"
-            onchange="changeSize(${index})"
-          >
-            ${options}
-          </select>
+          <div class="product-controls">
 
-          <div class="qty-row">
+            <select id="size_${key}">
+              ${options}
+            </select>
 
             <button
-              class="qty-btn minus"
-              onclick="changeQty(${index}, -1)"
-            >
-              −
-            </button>
-
-            <div
-              class="qty-number"
-              id="qty_${index}"
-            >
-              0
-            </div>
-
-            <button
-              class="qty-btn plus"
-              onclick="changeQty(${index}, 1)"
+              class="add-btn"
+              onclick="addItem('${item.name.replace(/'/g,"\\'")}')"
             >
               +
             </button>
@@ -932,49 +909,119 @@ function renderMenu(){
 
         </div>
 
-      </article>
-
-    `;
-
-  });
-
-}
+      `;
 
 
-/* =====================================================
-   LẤY SIZE HIỆN TẠI
-===================================================== */
+      grid.appendChild(card);
 
-function getSelectedSize(index){
-
-  const select =
-    document.getElementById("size_" + index);
-
-  return select.value;
-
-}
+    });
 
 
-/* =====================================================
-   ĐỔI SIZE
-===================================================== */
+    section.appendChild(grid);
 
-function changeSize(index){
 
-  const item = menu[index];
+    /* NƯỚC NGỌT TỰ NHẬP */
 
-  Object.keys(cart).forEach(id => {
+    if(category.category === "🥤 KHÁC"){
 
-    if(cart[id].menuIndex === index){
+      const softDrink = document.createElement("div");
 
-      delete cart[id];
+      softDrink.className = "soft-drink-card";
+
+      softDrink.innerHTML = `
+
+        <div class="soft-drink-title">
+          🥤 Nước ngọt khác
+        </div>
+
+        <div class="soft-drink-note">
+          Nhập tên loại nước ngọt bạn muốn. Giá sẽ được quán báo sau.
+        </div>
+
+        <div class="soft-drink-row">
+
+          <input
+            type="text"
+            id="customSoftDrink"
+            placeholder="Ví dụ: Coca, Pepsi, Sting, Sprite..."
+          >
+
+          <button onclick="addCustomSoftDrink()">
+            Thêm
+          </button>
+
+        </div>
+
+      `;
+
+      section.appendChild(softDrink);
 
     }
 
+
+    root.appendChild(section);
+
   });
 
-  document.getElementById("qty_" + index)
-    .textContent = "0";
+}
+
+
+/* =====================================================
+   LẤY GIÁ MÓN
+===================================================== */
+
+function getPrices(name){
+
+  for(const category of menu){
+
+    for(const item of category.items){
+
+      if(item.name === name){
+        return item.sizes;
+      }
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+/* =====================================================
+   THÊM MÓN CÓ GIÁ
+===================================================== */
+
+function addItem(name){
+
+  const key = createKey(name);
+
+  const select = document.getElementById("size_" + key);
+
+  const size = select.value;
+
+  const prices = getPrices(name);
+
+  const id = name + "|" + size;
+
+
+  if(!cart[id]){
+
+    cart[id] = {
+      id:id,
+      name:name,
+      size:size,
+      price:prices[size],
+      qty:0,
+      unpriced:false
+    };
+
+  }
+
+
+  cart[id].qty++;
+
 
   renderCart();
 
@@ -982,45 +1029,65 @@ function changeSize(index){
 
 
 /* =====================================================
-   THAY ĐỔI SỐ LƯỢNG
+   THÊM NƯỚC NGỌT KHÁCH TỰ NHẬP
 ===================================================== */
 
-function changeQty(index, amount){
+function addCustomSoftDrink(){
 
-  const item = menu[index];
+  const input = document.getElementById("customSoftDrink");
 
-  const size = getSelectedSize(index);
+  const drinkName = input.value.trim();
 
-  const id = index + "|" + size;
+
+  if(!drinkName){
+
+    alert("Vui lòng nhập tên loại nước ngọt.");
+
+    input.focus();
+
+    return;
+
+  }
+
+
+  const id = "CUSTOM_SOFT_DRINK|" + drinkName;
+
 
   if(!cart[id]){
 
-    if(amount < 0){
-      return;
-    }
-
     cart[id] = {
-
-      menuIndex: index,
-
-      name: item.name,
-
-      icon: item.icon,
-
-      size: size,
-
-      price: item.prices[size],
-
-      pending: item.pending === true,
-
-      qty: 0
-
+      id:id,
+      name:drinkName,
+      size:"Quán báo giá sau",
+      price:0,
+      qty:0,
+      unpriced:true
     };
 
   }
 
 
-  cart[id].qty += amount;
+  cart[id].qty++;
+
+
+  input.value = "";
+
+
+  renderCart();
+
+}
+
+
+/* =====================================================
+   TĂNG GIẢM SỐ LƯỢNG
+===================================================== */
+
+function changeQty(id,change){
+
+  if(!cart[id]) return;
+
+
+  cart[id].qty += change;
 
 
   if(cart[id].qty <= 0){
@@ -1028,23 +1095,6 @@ function changeQty(index, amount){
     delete cart[id];
 
   }
-
-
-  let qty = 0;
-
-  Object.values(cart).forEach(itemCart => {
-
-    if(itemCart.menuIndex === index){
-
-      qty += itemCart.qty;
-
-    }
-
-  });
-
-
-  document.getElementById("qty_" + index)
-    .textContent = qty;
 
 
   renderCart();
@@ -1058,28 +1108,26 @@ function changeQty(index, amount){
 
 function renderCart(){
 
-  const root = document.getElementById("cart");
+  const cartEl = document.getElementById("cart");
+
+  const totalEl = document.getElementById("total");
+
+  const warning = document.getElementById("unpricedWarning");
+
 
   const items = Object.values(cart);
-
-  const totalElement =
-    document.getElementById("total");
-
-  const pendingNote =
-    document.getElementById("pendingNote");
 
 
   if(items.length === 0){
 
-    root.innerHTML = `
-      <div class="cart-empty">
-        Chưa có món nào được chọn.
-      </div>
-    `;
+    cartEl.innerHTML =
+      `<div class="cart-empty">
+        Bạn chưa chọn món nào.
+      </div>`;
 
-    totalElement.textContent = "0đ";
+    totalEl.textContent = "0đ";
 
-    pendingNote.style.display = "none";
+    warning.style.display = "none";
 
     return;
 
@@ -1088,90 +1136,129 @@ function renderCart(){
 
   let total = 0;
 
-  let hasPending = false;
+  let hasUnpriced = false;
 
-  root.innerHTML = "";
+
+  cartEl.innerHTML = "";
 
 
   items.forEach(item => {
 
-    let rightText = "";
+    const subtotal = item.unpriced
+      ? 0
+      : item.price * item.qty;
 
-    if(item.pending || item.price === null){
 
-      hasPending = true;
+    if(item.unpriced){
 
-      rightText = `
-        <div class="cart-price cart-pending">
-          Quán báo giá sau
-        </div>
-      `;
+      hasUnpriced = true;
 
-    } else {
-
-      const subtotal =
-        item.price * item.qty;
+    }else{
 
       total += subtotal;
-
-      rightText = `
-        <div class="cart-price">
-          ${money(subtotal)}
-        </div>
-      `;
 
     }
 
 
-    root.innerHTML += `
+    const priceText = item.unpriced
+      ? "Quán báo giá sau"
+      : money(subtotal);
 
-      <div class="cart-item">
+
+    const itemEl = document.createElement("div");
+
+    itemEl.className = "cart-item";
+
+
+    itemEl.innerHTML = `
+
+      <div class="cart-top">
 
         <div>
 
           <div class="cart-name">
-            ${item.icon} ${item.name} × ${item.qty}
+            ${escapeHtml(item.name)}
           </div>
 
-          <div class="cart-detail">
-            ${item.size}
+          <div class="cart-size">
+            ${escapeHtml(item.size)}
           </div>
 
         </div>
 
-        ${rightText}
+        <div class="cart-price">
+          ${priceText}
+        </div>
+
+      </div>
+
+
+      <div class="cart-bottom">
+
+        <div class="qty-control">
+
+          <button
+            class="qty-btn"
+            onclick='changeQty(${JSON.stringify(item.id)},-1)'
+          >
+            −
+          </button>
+
+          <span class="qty-number">
+            ${item.qty}
+          </span>
+
+          <button
+            class="qty-btn"
+            onclick='changeQty(${JSON.stringify(item.id)},1)'
+          >
+            +
+          </button>
+
+        </div>
+
+
+        <div class="cart-subtotal">
+
+          ${
+            item.unpriced
+              ? "Giá chưa tính"
+              : money(item.price) + " × " + item.qty
+          }
+
+        </div>
 
       </div>
 
     `;
 
+
+    cartEl.appendChild(itemEl);
+
   });
 
 
-  totalElement.textContent = money(total);
+  totalEl.textContent = money(total);
 
 
-  if(hasPending){
-
-    pendingNote.style.display = "block";
-
-  } else {
-
-    pendingNote.style.display = "none";
-
-  }
+  warning.style.display =
+    hasUnpriced ? "block" : "none";
 
 }
 
 
 /* =====================================================
-   TẠO MÃ ĐƠN
+   CHỐNG LỖI HTML
 ===================================================== */
 
-function createOrderCode(){
+function escapeHtml(text){
 
-  return String(Date.now())
-    .slice(-6);
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
@@ -1182,40 +1269,37 @@ function createOrderCode(){
 
 async function submitOrder(){
 
-  const customerName =
-    document.getElementById("customerName")
-    .value
-    .trim();
+  const name =
+    document.getElementById("name").value.trim();
 
   const phone =
-    document.getElementById("phone")
-    .value
-    .trim();
+    document.getElementById("phone").value.trim();
 
   const className =
-    document.getElementById("className")
-    .value
-    .trim();
+    document.getElementById("className").value.trim();
 
   const note =
-    document.getElementById("note")
-    .value
-    .trim();
-
-  const items =
-    Object.values(cart);
+    document.getElementById("note").value.trim();
 
 
-  if(!customerName){
+  const items = Object.values(cart);
 
-    showResult(
-      "Vui lòng nhập tên của bạn.",
-      "error"
-    );
 
-    document
-      .getElementById("customerName")
-      .focus();
+  const result =
+    document.getElementById("result");
+
+  const button =
+    document.getElementById("orderBtn");
+
+
+  result.innerHTML = "";
+
+
+  if(!name){
+
+    alert("Vui lòng nhập tên của bạn.");
+
+    document.getElementById("name").focus();
 
     return;
 
@@ -1224,194 +1308,135 @@ async function submitOrder(){
 
   if(items.length === 0){
 
-    showResult(
-      "Vui lòng chọn ít nhất 1 món.",
-      "error"
-    );
+    alert("Vui lòng chọn ít nhất 1 món.");
 
     return;
 
   }
 
 
-  let total = 0;
+  const total = items.reduce((sum,item) => {
 
-  let hasPending = false;
+    if(item.unpriced) return sum;
 
+    return sum + item.price * item.qty;
 
-  items.forEach(item => {
-
-    if(item.pending || item.price === null){
-
-      hasPending = true;
-
-    } else {
-
-      total += item.price * item.qty;
-
-    }
-
-  });
+  },0);
 
 
-  const orderCode =
-    createOrderCode();
-
-
-  const orderData = {
-
-    orderCode: orderCode,
-
-    name: customerName,
-
-    customerName: customerName,
-
-    phone: phone,
-
-    className: className,
-
-    items: items,
-
-    note: note,
-
-    total: total,
-
-    hasPendingPrice: hasPending,
-
-    pendingText:
-      hasPending
-        ? "Có món quán báo giá sau"
-        : ""
-
-  };
-
-
-  const button =
-    document.getElementById("orderButton");
+  const hasUnpriced =
+    items.some(item => item.unpriced);
 
 
   button.disabled = true;
 
-  button.textContent =
-    "ĐANG GỬI ĐƠN...";
+  button.textContent = "ĐANG GỬI ĐƠN...";
 
 
   try{
 
-    const response =
-      await fetch(API_URL, {
 
-        method: "POST",
+    const response = await fetch(API_URL,{
 
-        body: JSON.stringify(orderData)
+      method:"POST",
 
-      });
+      headers:{
+        "Content-Type":"text/plain;charset=utf-8"
+      },
+
+      body:JSON.stringify({
+
+        name:name,
+
+        phone:phone,
+
+        className:className,
+
+        items:items,
+
+        note:note,
+
+        total:total,
+
+        hasUnpriced:hasUnpriced
+
+      })
+
+    });
 
 
-    const text =
-      await response.text();
+    const data = await response.json();
 
 
-    let data = null;
-
-
-    try{
-
-      data = JSON.parse(text);
-
-    }catch(e){
-
-      data = {
-        ok: response.ok
-      };
-
-    }
-
-
-    if(
-      data &&
-      data.ok === false
-    ){
+    if(!data.ok){
 
       throw new Error(
-        data.error ||
-        "Quán chưa nhận được đơn."
+        data.error || "Không thể gửi đơn."
       );
 
     }
 
 
-    let successText = `
-      ✅ Đặt món thành công! Mã đơn #${orderCode}<br>
-      Quán đã nhận được thông tin đơn hàng.
+    result.innerHTML = `
+
+      <div class="success">
+
+        <strong>✅ Đặt món thành công!</strong><br>
+
+        Mã đơn của bạn:
+        <strong>#${data.orderNo || "---"}</strong><br>
+
+        Quán đã nhận được thông tin đơn hàng.
+
+        ${
+          hasUnpriced
+            ? `<br>⚠ Một số món chưa có giá. Quán sẽ báo giá sau.`
+            : ""
+        }
+
+      </div>
+
     `;
 
 
-    if(hasPending){
-
-      successText += `
-        <br><br>
-        ⚠ Một số món chưa có giá. Quán sẽ báo giá sau.
-      `;
-
-    }
-
-
-    showResult(
-      successText,
-      "success"
-    );
-
+    /* RESET ĐƠN */
 
     cart = {};
-
-
-    menu.forEach((item, index) => {
-
-      const qtyElement =
-        document.getElementById("qty_" + index);
-
-      if(qtyElement){
-
-        qtyElement.textContent = "0";
-
-      }
-
-    });
-
 
     renderCart();
 
 
-    document
-      .getElementById("note")
-      .value = "";
+    document.getElementById("note").value = "";
 
 
-    document
-      .getElementById("phone")
-      .value = "";
-
-
-    document
-      .getElementById("className")
-      .value = "";
+    window.scrollTo({
+      top:document.body.scrollHeight,
+      behavior:"smooth"
+    });
 
 
   }catch(error){
 
-    showResult(
-      "❌ Chưa gửi được đơn.<br>" +
-      (error.message || "Vui lòng thử lại."),
-      "error"
-    );
+
+    result.innerHTML = `
+
+      <div class="error">
+
+        <strong>❌ Chưa gửi được đơn.</strong><br>
+
+        ${escapeHtml(error.message)}
+
+      </div>
+
+    `;
+
 
   }finally{
 
+
     button.disabled = false;
 
-    button.textContent =
-      "🛩 ĐẶT MÓN";
+    button.textContent = "🔴 ĐẶT MÓN";
 
   }
 
@@ -1419,35 +1444,10 @@ async function submitOrder(){
 
 
 /* =====================================================
-   HIỂN THỊ THÔNG BÁO
-===================================================== */
-
-function showResult(message, type){
-
-  const result =
-    document.getElementById("result");
-
-  result.className =
-    "result " + type;
-
-  result.innerHTML = message;
-
-
-  result.scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
-
-}
-
-
-/* =====================================================
-   KHỞI CHẠY
+   KHỞI TẠO
 ===================================================== */
 
 renderMenu();
-
-renderCart();
 
 </script>
 
