@@ -1,768 +1,217 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HAMI Coffee - Order</title>
-
-<style>
-:root{
-  --red:#c71919;
-  --dark:#090b0c;
-  --card:#141719;
-  --line:#333;
-  color-scheme:dark;
-}
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  background:var(--dark);
-  color:#fff;
-  font-family:Arial,sans-serif;
-}
-
-header{
-  padding:22px 16px;
-  text-align:center;
-  border-bottom:2px solid var(--red);
-  position:sticky;
-  top:0;
-  background:#090b0cf2;
-  z-index:5;
-}
-
-.logo{
-  font-size:42px;
-  font-style:italic;
-  color:#e21b1b;
-  font-weight:700;
-}
-
-.sub{
-  letter-spacing:5px;
-  font-size:13px;
-}
-
-.wrap{
-  max-width:760px;
-  margin:auto;
-  padding:16px;
-}
-
-.info,
-.cart,
-.category{
-  background:var(--card);
-  border:1px solid #272b2e;
-  border-radius:14px;
-  padding:14px;
-  margin:14px 0;
-}
-
-h2{
-  margin:0 0 12px;
-  color:#ff4242;
-  font-size:19px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-input,
-textarea,
-select{
-  width:100%;
-  padding:12px;
-  border-radius:9px;
-  border:1px solid #444;
-  background:#0d0f10;
-  color:#fff;
-  font-size:15px;
-}
-
-.item{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:12px 0;
-  border-bottom:1px dashed #444;
-}
-
-.item:last-child{
-  border:0;
-}
-
-.name{
-  font-weight:700;
-}
-
-.price{
-  color:#ffb0b0;
-  margin-top:4px;
-  font-size:14px;
-}
-
-.controls{
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-button{
-  border:0;
-  border-radius:9px;
-  padding:9px 12px;
-  background:var(--red);
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-}
-
-button:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-button.minus{
-  background:#333;
-}
-
-.cartline{
-  padding:7px 0;
-  border-bottom:1px dashed #444;
-}
-
-.total{
-  font-size:20px;
-  font-weight:700;
-  color:#ff6969;
-  margin-top:12px;
-}
-
-.order{
-  width:100%;
-  font-size:18px;
-  margin-top:12px;
-  padding:14px;
-}
-
-.note{
-  color:#aaa;
-  font-size:13px;
-  line-height:1.45;
-}
-
-.success{
-  background:#153a20;
-  border:1px solid #277a40;
-  padding:12px;
-  border-radius:10px;
-  margin-top:12px;
-}
-
-.error{
-  background:#3a1515;
-  border:1px solid #7a2727;
-  padding:12px;
-  border-radius:10px;
-  margin-top:12px;
-}
-
-@media(max-width:600px){
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .item{
-    flex-direction:column;
-  }
-
-  .controls{
-    width:100%;
-  }
-
-  .controls select{
-    flex:1;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <div class="logo">Hami</div>
-  <div class="sub">COFFEE • ORDER</div>
-</header>
-
-<main class="wrap">
-
-  <section class="info">
-    <h2>👤 Thông tin khách hàng</h2>
-
-    <div class="grid">
-      <input
-        id="name"
-        type="text"
-        placeholder="Tên khách hàng *"
-      >
-
-      <input
-        id="className"
-        type="text"
-        placeholder="Lớp (Số bàn)"
-      >
-    </div>
-  </section>
-
-
-  <div id="menu"></div>
-
-
-  <section class="cart">
-
-    <h2>🛒 Giỏ hàng</h2>
-
-    <div id="cart">
-      <span class="note">Chưa có món nào.</span>
-    </div>
-
-    <div class="total" id="total">
-      Tổng: 0đ
-    </div>
-
-    <textarea
-      id="note"
-      rows="3"
-      placeholder="Ghi chú: ít đá, ít ngọt..."
-    ></textarea>
-
-    <button
-      id="orderButton"
-      class="order"
-      onclick="submitOrder()"
-    >
-      🔴 ĐẶT MÓN
-    </button>
-
-    <div class="note">
-      Sau khi bấm đặt món, đơn sẽ gửi về quán.
-    </div>
-
-    <div id="result"></div>
-
-  </section>
-
-</main>
-
-
-<script>
-
-/* ================================
-   HAMI COFFEE - API URL
-================================ */
-
-const API_URL =
-"https://script.google.com/macros/s/AKfycbxEtpwhPxVq7kIJmQuY-qkao8KtFRQcQvPjSCzTy6l0p9pdr-N8h-m6Fxtsp66fq0A/exec";
-
-
-/* ================================
-   MENU
-================================ */
-
-const menu = [
-
-  [
-    "🧋 TRÀ",
-    [
-      ["Trà đào", { L:17000 }],
-      ["Trà dâu", { L:17000 }],
-      ["Trà vải", { L:17000 }]
-    ]
-  ],
-
-  [
-    "🥤 SODA",
-    [
-      ["Soda đào", { L:17000 }],
-      ["Soda dâu", { L:17000 }],
-      ["Soda việt quất", { L:17000 }],
-      ["Soda chanh dây", { L:17000 }]
-    ]
-  ],
-
-  [
-    "☕ CÀ PHÊ",
-    [
-      ["Cà phê đen đá", { M:15000 }],
-      ["Cà phê sữa", { M:17000 }],
-      ["Cà phê muối", { M:18000 }],
-      ["Bạc xỉu", { M:17000, L:20000 }]
-    ]
-  ],
-
-  [
-    "🥛 SỮA CHUA",
-    [
-      ["Sữa chua đào", { M:17000, L:22000 }],
-      ["Sữa chua dâu", { M:17000, L:22000 }],
-      ["Sữa chua việt quất", { M:17000, L:22000 }],
-      ["Sữa chua chanh dây", { M:17000, L:22000 }]
-    ]
-  ],
-
-  [
-    "🍵 LATTE",
-    [
-      ["Matcha latte", { M:17000, L:22000 }],
-      ["Khoai môn latte", { M:17000, L:22000 }],
-      ["Cacao latte", { M:17000, L:22000 }]
-    ]
-  ],
-
-  [
-    "🥤 KHÁC",
-    [
-      ["Nước chanh", { "Tiêu chuẩn":10000 }],
-      ["Lipton", { "Tiêu chuẩn":10000 }],
-      ["Trà đường", { "Tiêu chuẩn":10000 }],
-      ["Dừa lạnh", { "Tiêu chuẩn":15000 }],
-      ["Nước ngọt các loại", { "12k":12000, "15k":15000 }]
-    ]
-  ]
-
-];
-
-
-/* ================================
-   GIỎ HÀNG
-================================ */
-
-let cart = {};
-
-
-/* ================================
-   ĐỊNH DẠNG TIỀN
-================================ */
-
-function money(n) {
-  return Number(n || 0).toLocaleString("vi-VN") + "đ";
-}
-
-
-/* ================================
-   HIỂN THỊ MENU
-================================ */
-
-function renderMenu() {
-
-  const root = document.getElementById("menu");
-
-  root.innerHTML = "";
-
-  menu.forEach(([cat, items]) => {
-
-    const sec = document.createElement("section");
-
-    sec.className = "category";
-
-    sec.innerHTML = `<h2>${cat}</h2>`;
-
-    items.forEach(([name, sizes]) => {
-
-      const key = name.replace(/\s+/g, "_");
-
-      const sizeKeys = Object.keys(sizes);
-
-      const options = sizeKeys
-        .map(size =>
-          `<option value="${size}">
-            ${size} - ${money(sizes[size])}
-          </option>`
-        )
-        .join("");
-
-      const prices = sizeKeys
-        .map(size =>
-          `${size}: ${money(sizes[size])}`
-        )
-        .join(" | ");
-
-      const row = document.createElement("div");
-
-      row.className = "item";
-
-      row.innerHTML = `
-        <div>
-          <div class="name">${name}</div>
-          <div class="price">${prices}</div>
-        </div>
-
-        <div class="controls">
-          <select id="size_${key}">
-            ${options}
-          </select>
-
-          <button onclick="addItem('${name}')">
-            +
-          </button>
-        </div>
-      `;
-
-      sec.appendChild(row);
-
-    });
-
-    root.appendChild(sec);
-
+/**
+ * HAMI COFFEE - ORDER BACKEND
+ * Gửi đơn đến Telegram
+ *
+ * Script Properties cần có:
+ * TELEGRAM_BOT_TOKEN
+ * TELEGRAM_CHAT_ID_1
+ * TELEGRAM_CHAT_ID_2
+ * ORDER_COUNTER
+ */
+
+function doGet() {
+  return json_({
+    ok: true,
+    service: "HAMI Coffee Order API"
   });
-
 }
 
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents || "{}");
+    const props = PropertiesService.getScriptProperties();
 
-/* ================================
-   LẤY GIÁ MÓN
-================================ */
+    const token = props.getProperty("TELEGRAM_BOT_TOKEN");
 
-function getPrices(name) {
+    const chatIds = [
+      props.getProperty("TELEGRAM_CHAT_ID_1"),
+      props.getProperty("TELEGRAM_CHAT_ID_2")
+    ].filter(Boolean);
 
-  for (const [, items] of menu) {
-
-    for (const [itemName, prices] of items) {
-
-      if (itemName === name) {
-        return prices;
-      }
-
+    if (!token) {
+      throw new Error("Chưa cấu hình TELEGRAM_BOT_TOKEN.");
     }
 
-  }
-
-  return null;
-
-}
-
-
-/* ================================
-   THÊM MÓN
-================================ */
-
-function addItem(name) {
-
-  const key = name.replace(/\s+/g, "_");
-
-  const select = document.getElementById("size_" + key);
-
-  const size = select.value;
-
-  const id = name + "|" + size;
-
-  const prices = getPrices(name);
-
-  if (!prices) {
-    return;
-  }
-
-  if (!cart[id]) {
-
-    cart[id] = {
-      name: name,
-      size: size,
-      price: prices[size],
-      qty: 0
-    };
-
-  }
-
-  cart[id].qty++;
-
-  renderCart();
-
-}
-
-
-/* ================================
-   THAY ĐỔI SỐ LƯỢNG
-================================ */
-
-function change(id, amount) {
-
-  if (!cart[id]) {
-    return;
-  }
-
-  cart[id].qty += amount;
-
-  if (cart[id].qty <= 0) {
-    delete cart[id];
-  }
-
-  renderCart();
-
-}
-
-
-/* ================================
-   HIỂN THỊ GIỎ HÀNG
-================================ */
-
-function renderCart() {
-
-  const el = document.getElementById("cart");
-
-  const keys = Object.keys(cart);
-
-  if (!keys.length) {
-
-    el.innerHTML =
-      '<span class="note">Chưa có món nào.</span>';
-
-    document.getElementById("total").textContent =
-      "Tổng: 0đ";
-
-    return;
-  }
-
-  let total = 0;
-
-  el.innerHTML = "";
-
-  keys.forEach(id => {
-
-    const x = cart[id];
-
-    const sub = x.price * x.qty;
-
-    total += sub;
-
-    const line = document.createElement("div");
-
-    line.className = "cartline";
-
-    line.innerHTML = `
-      <b>${x.name}</b> (${x.size})<br>
-
-      ${money(x.price)}
-      ×
-
-      <button
-        class="minus"
-        onclick='change(${JSON.stringify(id)}, -1)'
-      >
-        −
-      </button>
-
-      ${x.qty}
-
-      <button
-        onclick='change(${JSON.stringify(id)}, 1)'
-      >
-        +
-      </button>
-
-      = <b>${money(sub)}</b>
-    `;
-
-    el.appendChild(line);
-
-  });
-
-  document.getElementById("total").textContent =
-    "Tổng: " + money(total);
-
-}
-
-
-/* ================================
-   GỬI ĐƠN HÀNG
-================================ */
-
-async function submitOrder() {
-
-  const name =
-    document.getElementById("name").value.trim();
-
-  const className =
-    document.getElementById("className").value.trim();
-
-  const items =
-    Object.values(cart);
-
-  const note =
-    document.getElementById("note").value.trim();
-
-
-  /* KIỂM TRA TÊN */
-
-  if (!name) {
-
-    alert("Vui lòng nhập Tên khách hàng.");
-
-    return;
-
-  }
-
-
-  /* KIỂM TRA MÓN */
-
-  if (!items.length) {
-
-    alert("Vui lòng chọn ít nhất 1 món.");
-
-    return;
-
-  }
-
-
-  /* TÍNH TỔNG */
-
-  const total = items.reduce(
-    (sum, item) =>
-      sum + item.price * item.qty,
-    0
-  );
-
-
-  /* NÚT ĐẶT MÓN */
-
-  const btn =
-    document.getElementById("orderButton");
-
-  const result =
-    document.getElementById("result");
-
-  btn.disabled = true;
-
-  btn.textContent = "⏳ Đang gửi đơn...";
-
-  result.innerHTML = "";
-
-
-  try {
-
-    const response = await fetch(API_URL, {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type":
-          "text/plain;charset=utf-8"
-      },
-
-      body: JSON.stringify({
-        name: name,
-        className: className,
-        items: items,
-        note: note,
-        total: total
-      })
-
-    });
-
-
-    /* ĐỌC DẠNG TEXT TRƯỚC */
-
-    const responseText =
-      await response.text();
-
-
-    /* HIỂN THỊ PHẢN HỒI TRONG CONSOLE */
-
-    console.log(
-      "Phản hồi Apps Script:",
-      responseText
-    );
-
-
-    /* CHUYỂN SANG JSON */
-
-    let data;
+    if (chatIds.length === 0) {
+      throw new Error("Chưa cấu hình Telegram Chat ID.");
+    }
+
+    if (!data.name) {
+      throw new Error("Chưa có tên khách hàng.");
+    }
+
+    if (!data.items || !data.items.length) {
+      throw new Error("Chưa có món nào.");
+    }
+
+    // Tạo số đơn hàng
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+
+    let orderNo;
 
     try {
-
-      data = JSON.parse(responseText);
-
-    } catch (jsonError) {
-
-      throw new Error(
-        "Máy chủ trả về dữ liệu không đúng. " +
-        "Vui lòng kiểm tra lại phần Deploy của Google Apps Script."
-      );
-
+      orderNo = nextOrderNo_();
+    } finally {
+      lock.releaseLock();
     }
 
+    // Danh sách món
+    const lines = data.items.map(function(x) {
 
-    /* KIỂM TRA KẾT QUẢ */
+      const itemName = escapeMd_(x.name);
+      const itemSize = x.size ? ` (${escapeMd_(x.size)})` : "";
+      const qty = Number(x.qty || 1);
 
-    if (!data.ok) {
+      // Món chưa có giá
+      if (x.price === null || x.price === undefined || x.price === "") {
+        return `• ${itemName}${itemSize} × ${qty} — Giá quán báo sau`;
+      }
 
-      throw new Error(
-        data.error || "Không gửi được đơn hàng."
-      );
+      // Món có giá
+      const subTotal = Number(x.price) * qty;
 
+      return `• ${itemName}${itemSize} × ${qty} — ${money_(subTotal)}`;
+    }).join("\n");
+
+    // Tổng tiền
+    let totalText;
+
+    if (data.hasPendingPrice) {
+      totalText =
+        `${money_(data.total || 0)} + món chưa báo giá`;
+    } else {
+      totalText = money_(data.total || 0);
     }
 
+    // Nội dung Telegram
+    const text =
+`🔔 *ĐƠN HÀNG MỚI #${orderNo}*
 
-    /* THÀNH CÔNG */
+👤 *Khách hàng:* ${escapeMd_(data.name)}
 
-    result.innerHTML = `
-      <div class="success">
-        ✅ Đặt món thành công!
-        ${data.orderNo
-          ? `<br>Mã đơn: <b>#${data.orderNo}</b>`
-          : ""
-        }
-      </div>
-    `;
+🏫 *Lớp / Số bàn:* ${escapeMd_(data.className || "Không có")}
 
+━━━━━━━━━━━━━━
 
-    /* XÓA GIỎ HÀNG */
+☕ *MÓN ĐÃ CHỌN:*
 
-    cart = {};
+${lines}
 
-    renderCart();
+━━━━━━━━━━━━━━
 
-    document.getElementById("note").value = "";
+💰 *TỔNG TẠM TÍNH:*
+${escapeMd_(totalText)}
 
+📝 *Ghi chú:*
+${escapeMd_(data.note || "Không có")}
 
-    /* GIỮ LẠI TÊN VÀ LỚP */
+🕒 *Thời gian:* ${escapeMd_(new Date().toLocaleString("vi-VN", {
+  timeZone: "Asia/Ho_Chi_Minh"
+}))}`;
 
-  } catch (error) {
+    const url =
+      `https://api.telegram.org/bot${token}/sendMessage`;
 
-    console.error(error);
+    // Gửi đến tất cả Telegram Chat ID
+    const results = chatIds.map(function(chatId) {
 
-    result.innerHTML = `
-      <div class="error">
-        ❌ <b>Chưa gửi được đơn</b><br>
-        ${error.message}
-      </div>
-    `;
+      const response = UrlFetchApp.fetch(url, {
+        method: "post",
+        contentType: "application/json",
+        payload: JSON.stringify({
+          chat_id: chatId,
+          text: text,
+          parse_mode: "Markdown"
+        }),
+        muteHttpExceptions: true
+      });
 
-  } finally {
+      const telegram =
+        JSON.parse(response.getContentText());
 
-    btn.disabled = false;
+      return {
+        chatId: chatId,
+        ok: telegram.ok,
+        error: telegram.ok
+          ? null
+          : telegram.description
+      };
+    });
 
-    btn.textContent = "🔴 ĐẶT MÓN";
+    const success = results.some(function(r) {
+      return r.ok;
+    });
 
+    if (!success) {
+      throw new Error(
+        results
+          .map(function(r) {
+            return r.error;
+          })
+          .filter(Boolean)
+          .join(" | ") ||
+        "Không gửi được thông báo Telegram."
+      );
+    }
+
+    return json_({
+      ok: true,
+      orderNo: orderNo
+    });
+
+  } catch (err) {
+
+    return json_({
+      ok: false,
+      error: String(err.message || err)
+    });
   }
-
 }
 
 
-/* ================================
-   KHỞI ĐỘNG MENU
-================================ */
+function nextOrderNo_() {
 
-renderMenu();
+  const props =
+    PropertiesService.getScriptProperties();
 
-</script>
+  const n =
+    Number(
+      props.getProperty("ORDER_COUNTER") || "0"
+    ) + 1;
 
-</body>
-</html>
+  props.setProperty(
+    "ORDER_COUNTER",
+    String(n)
+  );
+
+  return String(n).padStart(3, "0");
+}
+
+
+function money_(n) {
+  return Number(n || 0)
+    .toLocaleString("vi-VN") + "đ";
+}
+
+
+function escapeMd_(s) {
+
+  return String(s || "")
+    .replace(
+      /([_*[\]`])/g,
+      "\\$1"
+    );
+}
+
+
+function json_(obj) {
+
+  return ContentService
+    .createTextOutput(
+      JSON.stringify(obj)
+    )
+    .setMimeType(
+      ContentService.MimeType.JSON
+    );
+}
