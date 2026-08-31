@@ -1440,7 +1440,8 @@ async function submitOrder(){
     errorMessage.textContent =
       "Vui lòng nhập tên của bạn.";
 
-    errorMessage.style.display = "block";
+    errorMessage.style.display =
+      "block";
 
     document
       .getElementById("customerName")
@@ -1455,7 +1456,8 @@ async function submitOrder(){
     errorMessage.textContent =
       "Vui lòng chọn ít nhất một món.";
 
-    errorMessage.style.display = "block";
+    errorMessage.style.display =
+      "block";
 
     return;
   }
@@ -1463,7 +1465,7 @@ async function submitOrder(){
 
   let total = 0;
 
-  items.forEach(item=>{
+  items.forEach(item => {
 
     if(item.price !== null){
 
@@ -1485,19 +1487,26 @@ async function submitOrder(){
 
   const payload = {
 
-    name:name,
+    name:
+      name,
 
-    className:className,
+    className:
+      className,
 
-    phone:phone,
+    phone:
+      phone,
 
-    note:note,
+    note:
+      note,
 
-    items:items,
+    items:
+      items,
 
-    total:total,
+    total:
+      total,
 
-    hasPendingPrice:hasPendingPrice
+    hasPendingPrice:
+      hasPendingPrice
 
   };
 
@@ -1508,41 +1517,39 @@ async function submitOrder(){
 
   try{
 
-    /*
-      text/plain giúp tránh preflight CORS
-      Apps Script đọc JSON từ e.postData.contents
-    */
+    await fetch(
+      SCRIPT_URL,
+      {
+        method:
+          "POST",
 
-    const response =
-      await fetch(SCRIPT_URL,{
-
-        method:"POST",
+        mode:
+          "no-cors",
 
         headers:{
           "Content-Type":
             "text/plain;charset=utf-8"
         },
 
-        body:JSON.stringify(payload)
-
-      });
-
-
-    const result =
-      await response.json();
+        body:
+          JSON.stringify(payload)
+      }
+    );
 
 
-    if(!result.ok){
+    /*
+      Nếu fetch hoàn tất,
+      Apps Script đã nhận request.
 
-      throw new Error(
-        result.error ||
-        "Không gửi được đơn hàng."
-      );
-
-    }
+      Không đọc response.json()
+      vì Apps Script có thể trả
+      redirect khiến trình duyệt
+      không đọc được JSON.
+    */
 
 
     resetOrder();
+
 
     successMessage.style.display =
       "block";
@@ -1551,8 +1558,10 @@ async function submitOrder(){
     document
       .getElementById("orderBox")
       ?.scrollIntoView({
-        behavior:"smooth",
-        block:"center"
+        behavior:
+          "smooth",
+        block:
+          "center"
       });
 
 
@@ -1560,8 +1569,10 @@ async function submitOrder(){
 
     console.error(error);
 
+
     errorMessage.textContent =
       "Không thể gửi đơn. Vui lòng thử lại.";
+
 
     errorMessage.style.display =
       "block";
@@ -1569,11 +1580,13 @@ async function submitOrder(){
   }finally{
 
     button.disabled = false;
-    button.textContent = "ĐẶT MÓN";
+
+    button.textContent =
+      "ĐẶT MÓN";
 
   }
-}
 
+}
 
 /* =====================================================
    RESET ĐƠN
