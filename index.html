@@ -1276,14 +1276,32 @@ function changeQuantity(key, sizeIndex, change){
    TĂNG GIẢM SỐ LƯỢNG
    ===================================================== */
 
-function changeQuantity(key,change){
+/* =====================================================
+   CHỌN SIZE / TĂNG GIẢM SỐ LƯỢNG
+   ===================================================== */
+
+function changeQuantity(key, sizeIndex, change){
+
+  if(!orderState[key]){
+    return;
+  }
+
+  if(!Array.isArray(orderState[key].quantities)){
+    return;
+  }
+
+  const currentQuantity =
+    Number(orderState[key].quantities[sizeIndex] || 0);
 
   const newQuantity =
-    orderState[key].quantity + change;
+    currentQuantity + Number(change);
 
-  if(newQuantity < 0) return;
+  if(newQuantity < 0){
+    return;
+  }
 
-  orderState[key].quantity = newQuantity;
+  orderState[key].quantities[sizeIndex] =
+    newQuantity;
 
   renderMenu();
   updateOrder();
