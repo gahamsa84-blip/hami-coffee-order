@@ -1539,73 +1539,143 @@ function getOrderItems(){
 /* =====================================================
    GỬI ĐƠN
    ===================================================== */
-function checkShopStatus(){
+function checkShopStatus() {
+  return new Promise((resolve) => {
+    const callbackName = "shopStatus_" + Date.now();
 
-  return new Promise(function(resolve, reject){
+    window[callbackName] = function(data) {
+      try {
+        SHOP_STATUS = data?.shop?.status || "MO";
+        SHOP_MESSAGE = data?.shop?.message || "";
 
-    const callbackName =
-      "hamiStatus_" + Date.now();
-
-    const script =
-      document.createElement("script");
-
-    window[callbackName] =
-      function(data){
-
-        try{
-
-          delete window[callbackName];
-
-          script.remove();
-
-          if(
-            !data ||
-            data.ok !== true
-          ){
-            reject(
-              new Error(
-                "Không lấy được trạng thái quán."
-              )
-            );
-            return;
-          }
-
-          resolve(data);
-
-        }catch(error){
-
-          reject(error);
-
+        if (SHOP_STATUS === "DONG") {
+          setShopClosedUI();
+        } else {
+          setShopOpenUI();
         }
 
-      };
-
-    script.onerror =
-      function(){
-
+        resolve(data);
+      } catch (err) {
+        console.error("Lỗi trạng thái quán:", err);
+        resolve({
+          ok: false,
+          shop: {
+            status: "MO",
+            message: ""
+          }
+        });
+      } finally {
         delete window[callbackName];
+      }
+    };
 
-        script.remove();
-
-        reject(
-          new Error(
-            "Không thể kiểm tra trạng thái quán."
-          )
-        );
-
-      };
+    const script = document.createElement("script");
 
     script.src =
       SCRIPT_URL +
       "?action=status&callback=" +
-      encodeURIComponent(callbackName) +
+      callbackName +
       "&t=" +
       Date.now();
 
-    document.body.appendChild(script);
+    script.onerror = function() {
+      delete window[callbackName];
 
+      resolve({
+        ok: false,
+        shop: {
+          status: "MO",
+          message: ""
+        }
+      });
+    };
+
+    document.body.appendChild(script);
+  });
+}
+  function setShopClosedUI() {
+  SHOP_STATUS = "DONG";
+
+  // Khóa tất cả nút + và -
+  document.querySelectorAll("button").forEach(function(btn) {
+    const text = (btn.innerText || btn.textContent || "").trim();
+
+    if (text === "+" || text === "-" || text.includes("Đặt món")) {
+      btn.disabled = true;
+    }
   });
 
+  // Khóa nút đặt món theo id/class nếu có
+  const orderButtons = document.querySelectorAll(
+    "#orderBtn, .order-btn, button[type='submit']"
+  );
+
+  orderButtons.forEach(function(btn) {
+    btn.disabled = true;
+  });
+
+  showShopClosedMessage();
+}
+
+
+function setShopOpenUI() {
+  SHOP_STATUS = "MO";
+
+  document.querySelectorAll("button").forEach(function(btn) {
+    const text = (btn.innerText || btn.textContent || "").trim();
+
+    if (text === "+" || text === "-" || text.includes("Đặt món")) {
+      btn.disabled = false;
+    }
+  });
+
+  const orderButtons = document.querySelectorAll(
+    "#orderBtn, .order-btn, button[type='submit']"
+  );
+
+  orderButtons.forEach(function(btn) {
+    btn.disabled = false;
+  });
+
+  const box = document.getElementById("shopClosedMessage");
+
+  if (box) {
+    box.remove();
+  }
+}
+
+
+function showShopClosedMessage() {
+  let box = document.getElementById("shopClosedMessage");
+
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "shopClosedMessage";
+
+    box.style.cssText = `
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 30px);
+      max-width: 600px;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      border-radius: 12px;
+      padding: 15px 18px;
+      text-align: center;
+      font-weight: 600;
+      z-index: 99999;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    `;
+
+    document.body.appendChild(box);
+  }
+
+  box.textContent =
+    SHOP_MESSAGE ||
+    "HAMI Coffee hiện đang tạm đóng cửa. Vui lòng quay lại sau!";
 }
 async function submitOrder(){
 
@@ -1860,6 +1930,7 @@ function resetOrder(){
 
   renderMenu();
   updateOrder();
+  checkShopStatus();
 }
 
 /* =====================================================
