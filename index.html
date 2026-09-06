@@ -1001,7 +1001,7 @@ const menu = [
       },
 
        {
-        name:"Cacao latte",
+        name:"Cacao sữa",
         image:"images/cacao-latte.png",
         sizes:[
           {size:"M",price:17000},
@@ -1282,38 +1282,6 @@ function changeQuantity(key, sizeIndex, change){
 /* =====================================================
    TĂNG GIẢM SỐ LƯỢNG
    ===================================================== */
-
-/* =====================================================
-   CHỌN SIZE / TĂNG GIẢM SỐ LƯỢNG
-   ===================================================== */
-
-function changeQuantity(key, sizeIndex, change){
-
-  if(!orderState[key]){
-    return;
-  }
-
-  if(!Array.isArray(orderState[key].quantities)){
-    return;
-  }
-
-  const currentQuantity =
-    Number(orderState[key].quantities[sizeIndex] || 0);
-
-  const newQuantity =
-    currentQuantity + Number(change);
-
-  if(newQuantity < 0){
-    return;
-  }
-
-  orderState[key].quantities[sizeIndex] =
-    newQuantity;
-
-  renderMenu();
-  updateOrder();
-}
-
 
 /* =====================================================
    NƯỚC NGỌT
