@@ -1735,21 +1735,22 @@ try{
   const status =
     await checkShopStatus();
 
-  // NẾU QUÁN ĐANG ĐÓNG → KHÔNG GỬI ĐƠN
-  if(
-    status.shop &&
-    status.shop.status === "DONG"
-  ){
+ // NẾU QUÁN KHÔNG Ở TRẠNG THÁI MỞ → KHÔNG GỬI ĐƠN
+if(
+  !status ||
+  !status.shop ||
+  status.shop.status !== "MO"
+){
 
-    errorMessage.textContent =
-      status.shop.message ||
-      "HAMI Coffee hiện đang tạm đóng cửa.";
+  errorMessage.textContent =
+    status?.shop?.message ||
+    "HAMI Coffee hiện đang tạm đóng cửa.";
 
-    errorMessage.style.display =
-      "block";
+  errorMessage.style.display =
+    "block";
 
-    return;
-  }
+  return;
+}
 
   // QUÁN ĐANG MỞ → TIẾP TỤC GỬI ĐƠN
   button.textContent =
