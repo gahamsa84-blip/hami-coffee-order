@@ -1244,18 +1244,27 @@ function renderMenu(){
    CHỌN SIZE
    ===================================================== */
 
-function changeQuantity(key,sizeIndex,change){
+function changeQuantity(key, sizeIndex, change){
 
-  const state = orderState[key];
+  if(!orderState[key]){
+    return;
+  }
 
-  if(!state) return;
+  if(!Array.isArray(orderState[key].quantities)){
+    return;
+  }
+
+  const currentQuantity =
+    Number(orderState[key].quantities[sizeIndex] || 0);
 
   const newQuantity =
-    state.quantities[sizeIndex] + change;
+    currentQuantity + Number(change);
 
-  if(newQuantity < 0) return;
+  if(newQuantity < 0){
+    return;
+  }
 
-  state.quantities[sizeIndex] =
+  orderState[key].quantities[sizeIndex] =
     newQuantity;
 
   renderMenu();
