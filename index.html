@@ -1539,7 +1539,74 @@ function getOrderItems(){
 /* =====================================================
    GỬI ĐƠN
    ===================================================== */
+function checkShopStatus(){
 
+  return new Promise(function(resolve, reject){
+
+    const callbackName =
+      "hamiStatus_" + Date.now();
+
+    const script =
+      document.createElement("script");
+
+    window[callbackName] =
+      function(data){
+
+        try{
+
+          delete window[callbackName];
+
+          script.remove();
+
+          if(
+            !data ||
+            data.ok !== true
+          ){
+            reject(
+              new Error(
+                "Không lấy được trạng thái quán."
+              )
+            );
+            return;
+          }
+
+          resolve(data);
+
+        }catch(error){
+
+          reject(error);
+
+        }
+
+      };
+
+    script.onerror =
+      function(){
+
+        delete window[callbackName];
+
+        script.remove();
+
+        reject(
+          new Error(
+            "Không thể kiểm tra trạng thái quán."
+          )
+        );
+
+      };
+
+    script.src =
+      SCRIPT_URL +
+      "?action=status&callback=" +
+      encodeURIComponent(callbackName) +
+      "&t=" +
+      Date.now();
+
+    document.body.appendChild(script);
+
+  });
+
+}
 async function submitOrder(){
 
   const name =
@@ -1660,79 +1727,83 @@ async function submitOrder(){
 
 
   button.disabled = true;
-  button.textContent = "ĐANG GỬI...";
+button.textContent = "ĐANG KIỂM TRA...";
 
+try{
 
-  try{
+  // KIỂM TRA TRẠNG THÁI QUÁN TRƯỚC KHI GỬI
+  const status =
+    await checkShopStatus();
 
-    await fetch(
-      SCRIPT_URL,
-      {
-        method:
-          "POST",
-
-        mode:
-          "no-cors",
-
-        headers:{
-          "Content-Type":
-            "text/plain;charset=utf-8"
-        },
-
-        body:
-          JSON.stringify(payload)
-      }
-    );
-
-
-    /*
-      Nếu fetch hoàn tất,
-      Apps Script đã nhận request.
-
-      Không đọc response.json()
-      vì Apps Script có thể trả
-      redirect khiến trình duyệt
-      không đọc được JSON.
-    */
-
-
-    resetOrder();
-
-
-    successMessage.style.display =
-      "block";
-
-
-    document
-      .getElementById("orderBox")
-      ?.scrollIntoView({
-        behavior:
-          "smooth",
-        block:
-          "center"
-      });
-
-
-  }catch(error){
-
-    console.error(error);
-
+  // NẾU QUÁN ĐANG ĐÓNG → KHÔNG GỬI ĐƠN
+  if(
+    status.shop &&
+    status.shop.status === "DONG"
+  ){
 
     errorMessage.textContent =
-      "Không thể gửi đơn. Vui lòng thử lại.";
-
+      status.shop.message ||
+      "HAMI Coffee hiện đang tạm đóng cửa.";
 
     errorMessage.style.display =
       "block";
 
-  }finally{
-
-    button.disabled = false;
-
-    button.textContent =
-      "ĐẶT MÓN";
-
+    return;
   }
+
+  // QUÁN ĐANG MỞ → TIẾP TỤC GỬI ĐƠN
+  button.textContent =
+    "ĐANG GỬI...";
+
+  await fetch(
+    SCRIPT_URL,
+    {
+      method:"POST",
+
+      mode:"no-cors",
+
+      headers:{
+        "Content-Type":
+          "text/plain;charset=utf-8"
+      },
+
+      body:
+        JSON.stringify(payload)
+    }
+  );
+
+  // CHỈ HIỆN THÀNH CÔNG SAU KHI GỬI XONG
+  resetOrder();
+
+  successMessage.style.display =
+    "block";
+
+  document
+    .getElementById("orderBox")
+    ?.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+
+}catch(error){
+
+  console.error(error);
+
+  errorMessage.textContent =
+    error.message ||
+    "Không thể gửi đơn. Vui lòng thử lại.";
+
+  errorMessage.style.display =
+    "block";
+
+}finally{
+
+  button.disabled = false;
+
+  button.textContent =
+    "ĐẶT MÓN";
+
+}
 
 }
 
