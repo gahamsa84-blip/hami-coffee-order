@@ -253,7 +253,30 @@ textarea:focus{
   gap:7px;
   margin-top:10px;
 }
+.multi-size-list{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
 
+.size-option{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:8px;
+  background:#fffaf4;
+}
+
+.size-option .size-btn{
+  width:100%;
+  border:none;
+  background:transparent;
+  padding:4px;
+  text-align:center;
+}
+
+.size-option .quantity{
+  margin-top:7px;
+}
 .size-btn{
   flex:1;
   border:1px solid var(--border);
@@ -1051,17 +1074,37 @@ function renderMenu(){
 
       const key = `${groupIndex}-${itemIndex}`;
 
+      /*
+       * Mỗi size có số lượng riêng.
+       * Ví dụ:
+       * quantities[0] = số lượng M
+       * quantities[1] = số lượng L
+       */
+
       if(!orderState[key]){
 
         orderState[key] = {
-          selectedSize:0,
-          quantity:0
+          quantities: item.sizes.map(() => 0)
         };
 
       }
 
+      /*
+       * Nếu dữ liệu cũ chưa có quantities
+       * thì tạo lại để tránh lỗi.
+       */
+
+      if(
+        !Array.isArray(orderState[key].quantities) ||
+        orderState[key].quantities.length !== item.sizes.length
+      ){
+
+        orderState[key].quantities =
+          item.sizes.map(() => 0);
+
+      }
+
       const state = orderState[key];
-      const selected = item.sizes[state.selectedSize];
 
       html += `
         <article class="drink-card">
@@ -1082,58 +1125,102 @@ function renderMenu(){
             </div>
       `;
 
+      /*
+       * MÓN CHỈ CÓ 1 SIZE
+       */
+
       if(item.sizes.length === 1){
+
+        const size = item.sizes[0];
+        const quantity = state.quantities[0];
 
         html += `
           <div class="price">
-            ${selected.size ? selected.size + " - " : ""}
-            ${formatMoney(selected.price)}
+            ${size.size ? size.size + " - " : ""}
+            ${formatMoney(size.price)}
+          </div>
+
+          <div class="quantity">
+
+            <button
+              type="button"
+              class="qty-btn"
+              onclick="changeQuantity('${key}',0,-1)"
+            >−</button>
+
+            <div class="qty-number">
+              ${quantity}
+            </div>
+
+            <button
+              type="button"
+              class="qty-btn plus"
+              onclick="changeQuantity('${key}',0,1)"
+            >+</button>
+
           </div>
         `;
 
-      }else{
+      }
 
-        html += `<div class="size-list">`;
+      /*
+       * MÓN CÓ NHIỀU SIZE
+       *
+       * Mỗi size có bộ +/- riêng.
+       */
+
+      else{
+
+        html += `
+          <div class="size-list multi-size-list">
+        `;
 
         item.sizes.forEach((size,sizeIndex)=>{
 
+          const quantity =
+            state.quantities[sizeIndex];
+
           html += `
-            <button
-              type="button"
-              class="size-btn ${state.selectedSize === sizeIndex ? "active" : ""}"
-              onclick="selectSize('${key}',${sizeIndex})"
-            >
-              ${size.size}<br>${formatMoney(size.price)}
-            </button>
+            <div class="size-option">
+
+              <div class="size-btn">
+                ${size.size}
+                <br>
+                ${formatMoney(size.price)}
+              </div>
+
+              <div class="quantity">
+
+                <button
+                  type="button"
+                  class="qty-btn"
+                  onclick="changeQuantity('${key}',${sizeIndex},-1)"
+                >−</button>
+
+                <div class="qty-number">
+                  ${quantity}
+                </div>
+
+                <button
+                  type="button"
+                  class="qty-btn plus"
+                  onclick="changeQuantity('${key}',${sizeIndex},1)"
+                >+</button>
+
+              </div>
+
+            </div>
           `;
 
         });
 
-        html += `</div>`;
+        html += `
+          </div>
+        `;
 
       }
 
       html += `
-            <div class="quantity">
-
-              <button
-                type="button"
-                class="qty-btn"
-                onclick="changeQuantity('${key}',-1)"
-              >−</button>
-
-              <div class="qty-number">
-                ${state.quantity}
-              </div>
-
-              <button
-                type="button"
-                class="qty-btn plus"
-                onclick="changeQuantity('${key}',1)"
-              >+</button>
-
-            </div>
-
           </div>
 
         </article>
@@ -1143,6 +1230,7 @@ function renderMenu(){
 
     html += `
         </div>
+
       </section>
     `;
 
@@ -1156,9 +1244,19 @@ function renderMenu(){
    CHỌN SIZE
    ===================================================== */
 
-function selectSize(key,sizeIndex){
+function changeQuantity(key,sizeIndex,change){
 
-  orderState[key].selectedSize = sizeIndex;
+  const state = orderState[key];
+
+  if(!state) return;
+
+  const newQuantity =
+    state.quantities[sizeIndex] + change;
+
+  if(newQuantity < 0) return;
+
+  state.quantities[sizeIndex] =
+    newQuantity;
 
   renderMenu();
   updateOrder();
@@ -1221,54 +1319,68 @@ function updateOrder(){
   let totalMoney = 0;
   let hasItems = false;
 
-
   menu.forEach((group,groupIndex)=>{
 
     group.items.forEach((item,itemIndex)=>{
 
-      const key = `${groupIndex}-${itemIndex}`;
-      const state = orderState[key];
+      const key =
+        `${groupIndex}-${itemIndex}`;
 
-      if(state.quantity <= 0) return;
+      const state =
+        orderState[key];
 
-      hasItems = true;
+      if(!state || !Array.isArray(state.quantities)){
+        return;
+      }
 
-      const selected =
-        item.sizes[state.selectedSize];
+      item.sizes.forEach((size,sizeIndex)=>{
 
-      const subtotal =
-        selected.price * state.quantity;
+        const quantity =
+          state.quantities[sizeIndex];
 
-      totalItems += state.quantity;
-      totalMoney += subtotal;
+        if(quantity <= 0) return;
 
-      const sizeText =
-        selected.size
-          ? ` - Size ${selected.size}`
-          : "";
+        hasItems = true;
 
-      html += `
-        <div class="order-item">
+        const subtotal =
+          Number(size.price) *
+          Number(quantity);
 
-          <div class="order-top">
+        totalItems += quantity;
+        totalMoney += subtotal;
 
-            <div class="order-name">
-              ${item.name}${sizeText} × ${state.quantity}
-            </div>
+        const sizeText =
+          size.size
+            ? ` - Size ${size.size}`
+            : "";
 
-            <div class="order-price">
-              ${formatMoney(subtotal)}
+        html += `
+          <div class="order-item">
+
+            <div class="order-top">
+
+              <div class="order-name">
+                ${item.name}${sizeText} × ${quantity}
+              </div>
+
+              <div class="order-price">
+                ${formatMoney(subtotal)}
+              </div>
+
             </div>
 
           </div>
+        `;
 
-        </div>
-      `;
+      });
 
     });
 
   });
 
+  /*
+   * NƯỚC NGỌT
+   */
 
   const softName =
     document
@@ -1276,17 +1388,16 @@ function updateOrder(){
       .value
       .trim();
 
-
   const hasPendingPrice =
     softDrinkQuantity > 0 &&
     softName !== "";
-
 
   if(hasPendingPrice){
 
     hasItems = true;
 
-    totalItems += softDrinkQuantity;
+    totalItems +=
+      softDrinkQuantity;
 
     html += `
       <div class="order-item">
@@ -1301,9 +1412,7 @@ function updateOrder(){
 
       </div>
     `;
-
   }
-
 
   if(!hasItems){
 
@@ -1315,17 +1424,25 @@ function updateOrder(){
 
   }
 
+  orderList.innerHTML =
+    html;
 
-  orderList.innerHTML = html;
+  document
+    .getElementById("totalItems")
+    .textContent =
+      totalItems;
 
-  document.getElementById("totalItems").textContent =
-    totalItems;
+  document
+    .getElementById("totalMoney")
+    .textContent =
+      formatMoney(totalMoney);
 
-  document.getElementById("totalMoney").textContent =
-    formatMoney(totalMoney);
-
-  document.getElementById("pendingNote").style.display =
-    hasPendingPrice ? "block" : "none";
+  document
+    .getElementById("pendingNote")
+    .style.display =
+      hasPendingPrice
+        ? "block"
+        : "none";
 }
 
 
@@ -1337,30 +1454,52 @@ function getOrderItems(){
 
   const items = [];
 
-
   menu.forEach((group,groupIndex)=>{
 
     group.items.forEach((item,itemIndex)=>{
 
-      const key = `${groupIndex}-${itemIndex}`;
-      const state = orderState[key];
+      const key =
+        `${groupIndex}-${itemIndex}`;
 
-      if(state.quantity <= 0) return;
+      const state =
+        orderState[key];
 
-      const selected =
-        item.sizes[state.selectedSize];
+      if(!state || !Array.isArray(state.quantities)){
+        return;
+      }
 
-      items.push({
-        name:item.name,
-        size:selected.size,
-        price:selected.price,
-        qty:state.quantity
+      item.sizes.forEach((size,sizeIndex)=>{
+
+        const quantity =
+          state.quantities[sizeIndex];
+
+        if(quantity <= 0) return;
+
+        items.push({
+
+          name:
+            item.name,
+
+          size:
+            size.size,
+
+          price:
+            size.price,
+
+          qty:
+            quantity
+
+        });
+
       });
 
     });
 
   });
 
+  /*
+   * NƯỚC NGỌT
+   */
 
   const softName =
     document
@@ -1368,21 +1507,28 @@ function getOrderItems(){
       .value
       .trim();
 
-
   if(
     softDrinkQuantity > 0 &&
     softName
   ){
 
     items.push({
-      name:softName,
-      size:"",
-      price:null,
-      qty:softDrinkQuantity
+
+      name:
+        softName,
+
+      size:
+        "",
+
+      price:
+        null,
+
+      qty:
+        softDrinkQuantity
+
     });
 
   }
-
 
   return items;
 }
@@ -1594,35 +1740,53 @@ async function submitOrder(){
 
 function resetOrder(){
 
-  Object.keys(orderState)
-    .forEach(key=>{
+  menu.forEach((group,groupIndex)=>{
 
-      orderState[key].quantity = 0;
-      orderState[key].selectedSize = 0;
+    group.items.forEach((item,itemIndex)=>{
+
+      const key =
+        `${groupIndex}-${itemIndex}`;
+
+      orderState[key] = {
+
+        quantities:
+          item.sizes.map(() => 0)
+
+      };
 
     });
 
+  });
 
   softDrinkQuantity = 0;
 
+  document
+    .getElementById("softQty")
+    .textContent = "0";
 
-  document.getElementById("softQty").textContent = "0";
+  document
+    .getElementById("softDrinkName")
+    .value = "";
 
-  document.getElementById("softDrinkName").value = "";
+  document
+    .getElementById("customerName")
+    .value = "";
 
-  document.getElementById("customerName").value = "";
+  document
+    .getElementById("customerClass")
+    .value = "";
 
-  document.getElementById("customerClass").value = "";
+  document
+    .getElementById("customerPhone")
+    .value = "";
 
-  document.getElementById("customerPhone").value = "";
-
-  document.getElementById("customerNote").value = "";
-
+  document
+    .getElementById("customerNote")
+    .value = "";
 
   renderMenu();
   updateOrder();
 }
-
 
 /* =====================================================
    HÀM HỖ TRỢ
